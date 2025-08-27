@@ -1,0 +1,31 @@
+plugins:
+  - rubocop-minitest
+  - rubocop-rake
+
+AllCops:
+  NewCops: enable
+  TargetRubyVersion: 3.4
+
+# I keep the length as short as possible without having too much pain.
+# 80 is too much pain, but many disagree.
+Layout/LineLength:
+  Max: 100
+
+# Automatically add frozen string safety comments.
+Style/FrozenStringLiteralComment:
+  SafeAutoCorrect: true
+
+# # Tests and Rake tasks may have long blocks.
+# Metrics/BlockLength:
+#   Exclude:
+#     - '**/Rakefile'
+#     - '**/*.rake'
+#     - '**/test/**/*_test.rb'
+
+Layout/LineLength:
+  Exclude:
+    - '**/test/**/*_test.rb'
+
+Minitest/MultipleAssertions:
+  Exclude:
+    - '**/test/**/*_test.rb'

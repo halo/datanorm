@@ -1,0 +1,14 @@
+# Operating System
+.DS_Store
+
+# Caches
+.bundle
+.yardoc
+
+.byebug_history
+/*.gem
+
+# Documentation
+/coverage
+/doc/*
+/tmp/*
