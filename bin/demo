@@ -9,7 +9,7 @@ ENV['DEBUG_DATANORM'] = 'true'
 path = ARGV.first
 document1 = Datanorm::Document.new(path:)
 
-document1.items do |item|
+document1.each do |item|
   puts item
   break if item.index > 100
 end

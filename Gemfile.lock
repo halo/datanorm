@@ -8,6 +8,7 @@ PATH
       csv
       logger
       tron
+      tty-progressbar
 
 GEM
   remote: https://rubygems.org/
@@ -54,10 +55,16 @@ GEM
       rubocop (>= 1.75.0, < 2.0)
       rubocop-ast (>= 1.38.0, < 2.0)
     ruby-progressbar (1.13.0)
+    strings-ansi (0.2.0)
     tron (3.0.0)
-    unicode-display_width (3.1.5)
-      unicode-emoji (~> 4.0, >= 4.0.4)
-    unicode-emoji (4.0.4)
+    tty-cursor (0.7.1)
+    tty-progressbar (0.18.2)
+      strings-ansi (~> 0.2)
+      tty-cursor (~> 0.7)
+      tty-screen (~> 0.8)
+      unicode-display_width (>= 1.6, < 3.0)
+    tty-screen (0.8.2)
+    unicode-display_width (2.6.0)
 
 PLATFORMS
   arm64-darwin-24

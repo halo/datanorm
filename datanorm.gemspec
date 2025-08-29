@@ -3,9 +3,9 @@
 Gem::Specification.new do |s|
   s.name = 'datanorm'
   s.version = '0.0.1'
-  s.required_ruby_version = '>= 3.0.0'
+  s.required_ruby_version = '>= 3.4.0'
   s.license = 'MIT'
-  s.summary = 'Parse German DATANORM files like you belong to the 90s.'
+  s.summary = 'Parse German DATANORM files like you belong to the 90s'
   s.authors = ['halo']
   s.metadata = {
     'bug_tracker_uri' => 'https://github.com/halo/datanorm/issues',
@@ -22,4 +22,5 @@ Gem::Specification.new do |s|
   s.add_dependency 'csv'
   s.add_dependency 'logger'
   s.add_dependency 'tron'
+  s.add_dependency 'tty-progressbar'
 end

@@ -11,7 +11,7 @@ module Datanorm
 
         def call
           # This is an arbitrary number to see if there are enough semicolons
-          # to beleive that this could be a v5 file.
+          # to believe that this could be a v5 file.
           return unless columns.size > 3
           return unless version_number == '050'
 

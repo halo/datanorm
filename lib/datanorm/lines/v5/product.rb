@@ -19,7 +19,7 @@ module Datanorm
         end
 
         def price
-          columns[8].to_d / 100
+          BigDecimal(columns[8]) / 100
         end
 
         def item_title

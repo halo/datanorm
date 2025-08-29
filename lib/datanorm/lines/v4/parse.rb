@@ -8,21 +8,19 @@ module Datanorm
         include Calls
 
         CLASSES = {
-          # 'V' => Datanorm::Lines::V4::Header,
           'A' => Datanorm::Lines::V4::Product,
           'B' => Datanorm::Lines::V4::Extra,
-          'T' => Datanorm::Lines::V4::Text,
-          'D' => Datanorm::Lines::V4::Dimension
+          'D' => Datanorm::Lines::V4::Dimension,
+          'T' => Datanorm::Lines::V4::Text
           # 'P' => Datanorm::Lines::V4::Price,
-          # 'C' => Datanorm::Lines::Base,
-          # 'S' => Datanorm::Lines::Base
         }.freeze
 
         option :columns
+        option :line_number
 
         def call
-          klass = CLASSES[columns.first[0]] || Datanorm::Lines::Base
-          klass.new(columns)
+          klass = CLASSES.fetch(columns.first[0], Datanorm::Lines::Base)
+          klass.new(columns:, line_number:)
         end
       end
     end

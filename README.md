@@ -43,7 +43,9 @@ In Datanorm, *one line* in the file represents one record. The most common ones 
 
 * `T` records were originally meant to be long texts that similar products could reference to. So, in addition to the description `D` for one single product, each product could additionally reference one `T` text that it might share with other products. But in practice they are not shared and `T` is often used instead of `D`. In other words, sometimes every single product has one single set of `T` records just for that one product. What makes `T` records complicated, in terms of file processing, is that each set of `T` records has a unique ID that is not related to any product. Rather, a product will reference that (made-up) text record set ID to indicate that those `T` records hold the long text description for a product. But the `T` records could be anywhere else in the file, so it's hard to parse.
 
-* Usually, one `A` record holds one price for that product. But there also exist so called `P` records (one per product) that hold nothing but the product ID and one price for that product. All these `P` price records are delivered in a separate file called `DATPREIS.001`, because you need fewer floppy disks if you only regularly update the prices rather than the entirety of all product details (given you already have imported them before).
+* Usually, one `A` record holds one price for that product. But there also exist so called `P` records (one per product) that hold nothing but the product ID and one price for that product. All these `P` price records are delivered in a separate file called `DATPREIS.001`, because you need fewer floppy disks if you only regularly update the prices rather than the entirety of all product details (given you already have imported them before). Sometimes you're dependent on those `P` records from another file, because the `A` record may specify a recommended selling price whereas the corresponding `P` may have discount details that tell you the purchase price. So you might do handle multiple files.
+
+* Only in V5 there exists a `C` record that specifies additional data for one product, such as public tender descriptions and how much work time it normally takes to physically install a product.
 
 # About this Rubygem
 
@@ -93,7 +95,7 @@ puts document.version
 document.items do |item|
   puts item
 end
-````
+```
 
 In case you want the Datanorm file one line at a time, you can use this:
 
@@ -102,15 +104,22 @@ file = Datanorm::File.new(path: 'datanorm.001')
 
 puts file.header
 puts file.version
+puts file.lines_count
 
-file.lines.each do |row|
-  puts row
+file.lines.each do |record, line_number|
+  puts record
 end
 ```
 
 You can set the ENV variable `DEBUG_DATANORM=1` for verbose logging output.
 
 ## Development
+
+Throughout the code, the following terms are used:
+
+* `line` is one line of a Datanorm file.
+* `record` is one Ruby Object representing one `line`.
+* `item` is a product and all its (immediate and referenced) attributes.
 
 Run unit tests with `bin/tests`.
 

@@ -2,15 +2,14 @@
 
 module Datanorm
   # Loads and parses a datanorm file product by product.
-  # Each product may be partial (e.g. only price or name or description).
-  # It's optimized for memory-efficiency, you must consolidate partial records yourself
-  # if you're reading in a single file that's multiple gigabytes large.
   class Document
     include Datanorm::Logging
+    include Enumerable
 
-    def initialize(path:, project_id: SecureRandom.uuid)
+    attr_reader :path
+
+    def initialize(path:)
       @path = path
-      @project_id = project_id
     end
 
     def header
@@ -21,21 +20,30 @@ module Datanorm
       file.version
     end
 
-    def items(&)
-      lines do |pass, row, index|
-        if (index % 50_000).zero?
-          percentage = ((index.to_f / file.lines_count) * 100).round(1)
-          log { "Processing. pass #{pass} #{percentage}% #{index}/#{file.lines_count}" }
-        end
+    def each
+      lines do |pass, record, index|
+        # if (index % 50_000).zero?
+        #   percentage = ((index.to_f / file.lines_count) * 100).round(1)
+        #   log { "Processing. pass #{pass} #{percentage}% #{index}/#{file.lines_count}" }
+        # end
 
-        process = ::Datanorm::Documents::Process.call(project_id:, pass:, row:, index:, total_index:)
+        process = ::Datanorm::Documents::Process.call(
+          project_id:,
+          pass:,
+          record:,
+          index:,
+          total_index:
+        )
+
         yield process if process
       end
     end
 
-    private
+    def project_id
+      @project_id ||= (Time.now.to_f * 1_000_000_000).to_i.to_s
+    end
 
-    attr_reader :path, :project_id
+    private
 
     def lines
       index = 0
@@ -43,19 +51,15 @@ module Datanorm
       %i[preprocess standard].each do |pass|
         log { "Beginning pass #{pass}" }
 
-        file.lines do |row|
+        file.lines do |record|
           index += 1
-          yield pass, row, index
-
-          # We assume TEXT records are only at the beginning of the file.
-          # As soon as we hit a PRODUCT record, we can end the first pass.
-          break if pass == :preprocess && row.product?
+          yield pass, record, index
         end
       end
     end
 
     def total_index
-      file.lines_count * 2
+      file.lines_count * 2 # Two passes
     end
 
     def file

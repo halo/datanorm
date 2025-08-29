@@ -8,7 +8,7 @@ module Datanorm
 
       option :project_id
       option :pass
-      option :row
+      option :record, as: :row
       option :index
       option :total_index
 
@@ -43,25 +43,25 @@ module Datanorm
       end
 
       def standard
-        puts row
+        # puts row
 
-        if row.price?
-          prices.add(row: row)
+        # if row.price?
+        #   prices.add(row: row)
 
-        elsif row.dimension? || row.extra?
-          items.add(row: row)
+        # elsif row.dimension? || row.extra?
+        #   items.add(row: row)
 
-        elsif row.product?
-          items.add(row: row)
+        # elsif row.product?
+        #   items.add(row: row)
 
-          if items.buffer_full?
-            item = items.shift
+        #   if items.buffer_full?
+        #     item = items.shift
 
-            # Once we're ready so present a product, we need to amend it with texts and prices.
-            inject(item)
-            return item
-          end
-        end
+        #     # Once we're ready so present a product, we need to amend it with texts and prices.
+        #     inject(item)
+        #     return item
+        #   end
+        # end
 
         nil
       end

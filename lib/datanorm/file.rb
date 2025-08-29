@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Datanorm
-  # Parses a datanorm file row by row.
+  # Parses a datanorm file line by line.
   class File
     include Datanorm::Logging
 
@@ -22,14 +22,13 @@ module Datanorm
     end
 
     def lines
-      line = 0
+      line_number = 0
+
       ::CSV.foreach(path, **options) do |columns|
-        line += 1
-        next if line == 1 # Skip header, it's parsed separately
+        line_number += 1
+        next if line_number == 1 # Skip header, it's parsed separately
 
-        row = ::Datanorm::Lines::Parse.call(columns:, version:)
-
-        yield row, line
+        yield ::Datanorm::Lines::Parse.call(version:, columns:, line_number:)
       end
     end
 
@@ -39,7 +38,7 @@ module Datanorm
 
       log { 'Scanning number of total lines... (this takes about 2 seconds per GB)' }
       @lines_count = ::File.read(path, encoding: Encoding::CP850).scan("\n").length
-      log { 'Scan complete' }
+      log { "Scan complete, counted #{@lines_count} lines." }
       @lines_count
     end
 
