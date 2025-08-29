@@ -6,14 +6,10 @@ require 'datanorm'
 
 ENV['DEBUG_DATANORM'] = 'true'
 
-# path = '/Users/orange/Desktop/datanorm.001'
-path = '/Users/orange/Desktop/A6V13530363_de/V4/DATANORM.300'
-document = Datanorm::Document.new(path:)
+path = ARGV.first
+document1 = Datanorm::Document.new(path:)
 
-puts document.header
-
-document.items do |item, iteration, total_iterations|
-  puts "#{iteration}/#{total_iterations} #{item}"
-
-  exit if iteration > 1000
+document1.items do |item|
+  puts item
+  break if item.index > 100
 end

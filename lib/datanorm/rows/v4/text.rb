@@ -23,7 +23,7 @@ module Datanorm
         end
 
         def content
-          [columns[6], columns[9]].join("\n")
+          [columns[6], columns[9]].join("\n").strip
         end
 
         def <=>(other)

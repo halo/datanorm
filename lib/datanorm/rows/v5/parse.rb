@@ -9,7 +9,7 @@ module Datanorm
         CLASSES = {
           # 'V' => Datanorm::Rows::V5::Header,
           'A' => Datanorm::Rows::V5::Product
-          # 'B' => Datanorm::Rows::V5::Extra,
+          # 'B' => Datanorm::Rows::V5::Extra, # In v4 this has product data, in V5 only DELETION notice.
           # 'T' => Datanorm::Rows::V5::Text,
           # 'D' => Datanorm::Rows::V5::Dimension,
           # 'P' => Datanorm::Rows::V5::Price,

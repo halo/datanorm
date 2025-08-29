@@ -21,6 +21,10 @@ module Datanorm
       end
     end
 
+    def version
+      header.version
+    end
+
     def rows
       line = 0
       ::CSV.foreach(path, **options) do |columns|
@@ -33,10 +37,6 @@ module Datanorm
       end
     end
 
-    def version
-      header.version
-    end
-
     def lines_count
       return @lines_count if defined?(@lines_count)
 
@@ -44,6 +44,19 @@ module Datanorm
       @lines_count = ::File.read(path, encoding: Encoding::CP850).scan("\n").length
       log { 'Scan complete' }
       @lines_count
+    end
+
+    def text_records?
+      return @text_records if defined?(@text_records)
+
+      log { 'Scanning for TEXT records... (this takes about 2 seconds per GB)' }
+      ::File.read(path, encoding: Encoding::CP850).scan("\nT;") do
+        log { 'TEXT records were found.' }
+        return @text_records = true
+      end
+
+      log { 'No TEXT records found.' }
+      @text_records = false
     end
 
     private

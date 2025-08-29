@@ -21,24 +21,24 @@ module Datanorm
         @items.last
       end
 
-      def find(id)
-        @items.detect { it.id == id }
-      end
+      # def find(id)
+      #   @items.detect { it.id == id }
+      # end
 
       def buffer_full?
         @items.size > 10
       end
 
-      def size
-        @items.size
-      end
+      # def size
+      #   @items.size
+      # end
 
-      def empty?
-        @items.empty?
-      end
+      # def empty?
+      #   @items.empty?
+      # end
 
       def shift
-        raise 'Cannot shift if `#empty?`' if empty?
+        raise 'Cannot shift if `#empty?`' if @items.empty?
 
         @items.shift
       end

@@ -8,8 +8,9 @@ module Datanorm
   class Document
     include Datanorm::Logging
 
-    def initialize(path:)
+    def initialize(path:, project_id: SecureRandom.uuid)
       @path = path
+      @project_id = project_id
     end
 
     def header
@@ -20,72 +21,49 @@ module Datanorm
       file.version
     end
 
-    # One common combo is [A], [B], [D] per product throughout the whole file.
-    # In that case, the ID is the same for all three.
-    #
-    # Another variant is to have all [T] at the beginning and then [A] etc. at the end of the file.
-    # In that case the IDs of [T] are separate and later referenced in [A].
     def items(&)
+      rows do |pass, row, index|
+        if (index % 50_000).zero?
+          percentage = ((index.to_f / file.lines_count) * 100).round(1)
+          log { "Processing. pass #{pass} #{percentage}% #{index}/#{file.lines_count}" }
+        end
+
+        process = ::Datanorm::Documents::Process.call(project_id:, pass:, row:, index:, total_index:)
+        yield process if process
+      end
+    end
+
+    private
+
+    attr_reader :path, :project_id
+
+    def rows
       index = 0
-      [1, 2].each do |pass|
+
+      passes.each do |pass|
         log { "Beginning pass #{pass}" }
 
         file.rows do |row|
           index += 1
+          yield pass, row, index
 
-          if pass == 1
-            yield process_first_pass(row:), index, file.lines_count * 2
-          else
-            yield process_second_pass(row:), index, file.lines_count * 2
-          end
+          # We assume TEXT records are only at the beginning of the file.
+          # As soon as we hit a PRODUCT record, we can end the first pass.
+          break if pass == :preprocess && row.product?
         end
       end
     end
 
-    # def items(&block)
-    #   @texts = ::Datanorm::Texts::Container.new
-    #   @prices = ::Datanorm::Prices::Container.new
-    #   @items = ::Datanorm::Items::Container.new
-
-    #   rows do |row|
-    #     if row.text?
-    #       @texts.add(row: row)
-
-    #     elsif row.price?
-    #       @prices.add(row: row)
-
-    #     elsif row.dimension? || row.extra?
-    #       @items.add(row: row)
-
-    #     elsif row.product?
-    #       @items.add(row: row)
-
-    #       if @items.buffer_full?
-    #         item = @items.shift
-    #         inject(item)
-    #         block.call item
-    #       end
-    #     end
-    #   end
-
-    #   until @items.empty?
-    #     item = @items.shift
-    #     inject(item)
-    #     block.call(item)
-    #   end
-    #   nil
-    # end
-
-    private
-
-    attr_reader :path
-
-    def process_first_pass(row:)
-      row
+    def passes
+      if file.text_records?
+        %i[preprocess standard]
+      else
+        %i[standard]
+      end
     end
 
-    def process_second_pass(row:)
-      # puts row
+    def total_index
+      file.lines_count * passes.size
     end
 
     def file
@@ -93,17 +71,5 @@ module Datanorm
 
       @file = ::Datanorm::File.new(path:)
     end
-
-    # # -------
-    # # Logging
-    # # -------
-
-    # def log(message = nil)
-    #   puts message if ENV['DEBUG']
-    # end
-
-    # def activity(indicator)
-    #   print indicator if ENV['DEBUG']
-    # end
   end
 end
