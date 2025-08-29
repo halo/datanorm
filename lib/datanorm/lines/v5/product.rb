@@ -1,7 +1,7 @@
 module Datanorm
-  module Rows
+  module Lines
     module V5
-      class Product < ::Datanorm::Rows::Base
+      class Product < ::Datanorm::Lines::Base
         def to_s
           "[#{id}] Product-5 #{item_title} - EUR #{price}"
         end

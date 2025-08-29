@@ -1,8 +1,8 @@
 module Datanorm
-  module Rows
+  module Lines
     module V4
       module Prices
-        class Discount < ::Datanorm::Rows::Base
+        class Discount < ::Datanorm::Lines::Base
           def to_s
             "[#{id}] DISCOUNT-4 #{%|PERCENTAGE #{percentage}| if percentage_discount?} #{'FIXED' if fixed_price?} EUR #{price} -> EUR #{target_purchase_price}"
           end

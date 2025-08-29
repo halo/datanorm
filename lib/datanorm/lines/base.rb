@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Datanorm
-  module Rows
+  module Lines
     # V: Vorlaufsatz (identifies file metadata, often the first line).
     # K: Kopfsatz (header with catalog or transaction details).
     # A: Artikelsatz (product/product data).
@@ -21,7 +21,7 @@ module Datanorm
       end
 
       # Usually a product number.
-      # Multiple rows can have the same ID (e.g. one for price and several for description).
+      # Multiple lines can have the same ID (e.g. one for price and several for description).
       # Text records can also have their own IDs and they don't equal the product number.
       # Overriden in subclasses.
       def id

@@ -2,8 +2,8 @@
 
 module Datanorm
   module Documents
-    # Takes multiple Text rows (uniquely identified by file_id and line_number)
-    # and writes them to disk. One temporary file per product (i.e. multiple text rows).
+    # Takes multiple Text lines (uniquely identified by file_id and line_number)
+    # and writes them to disk. One temporary file per product (i.e. multiple text lines).
     class Cache
       include Calls
       include ::Datanorm::Logging

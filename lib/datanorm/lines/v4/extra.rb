@@ -1,7 +1,7 @@
 module Datanorm
-  module Rows
+  module Lines
     module V4
-      class Extra < ::Datanorm::Rows::Base
+      class Extra < ::Datanorm::Lines::Base
         def to_s
           "EXTRA     [#{id}] #{"{#{matchcode}}" unless matchcode.empty?} EAN: #{ean}"
         end

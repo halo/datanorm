@@ -103,7 +103,7 @@ file = Datanorm::File.new(path: 'datanorm.001')
 puts file.header
 puts file.version
 
-file.rows.each do |row|
+file.lines.each do |row|
   puts row
 end
 ```

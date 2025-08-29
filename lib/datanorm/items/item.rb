@@ -8,7 +8,7 @@ module Datanorm
 
       def initialize(id:)
         @id = id
-        @rows = Set.new
+        @lines = Set.new
       end
 
       def text_id
@@ -31,12 +31,12 @@ module Datanorm
         extra_row&.vendor_item_id
       end
 
-      def add(row: nil, rows: [])
-        puts "Item #{id} gets ROW #{row.inspect} ROWS #{rows.inspect}" if ENV['DEBUG']
-        return if rows.blank? && row.blank?
+      def add(row: nil, lines: [])
+        puts "Item #{id} gets ROW #{row.inspect} ROWS #{lines.inspect}" if ENV['DEBUG']
+        return if lines.blank? && row.blank?
 
-        rows.push(row) if row
-        rows.each { @rows.add it }
+        lines.push(row) if row
+        lines.each { @lines.add it }
       end
 
       def title
@@ -44,7 +44,7 @@ module Datanorm
       end
 
       def description
-        description_rows.sort
+        description_lines.sort
                         .map(&:content)
                         .join("\n")
                         .delete_prefix(title.to_s)
@@ -57,8 +57,8 @@ module Datanorm
       end
 
       def target_purchase_price
-        if discount_rows.present?
-          discount_rows.sort.last.target_purchase_price
+        if discount_lines.present?
+          discount_lines.sort.last.target_purchase_price
         else
           product_row&.price
         end
@@ -72,10 +72,10 @@ module Datanorm
           ---------------------------------------------------------------
           #{matchcode} [#{vendor_item_id}]
 
-          Text #{text_id} (#{dimension_rows.size} Dimensions)
+          Text #{text_id} (#{dimension_lines.size} Dimensions)
           #{description}
           ---------------------------------------------------------------
-          #{rows.to_a.join("\n")}
+          #{lines.to_a.join("\n")}
           ===============================================================
 
         STRING
@@ -83,30 +83,30 @@ module Datanorm
 
       private
 
-      attr_reader :rows
+      attr_reader :lines
 
-      def description_rows
-        dimension_rows.presence || text_rows
+      def description_lines
+        dimension_lines.presence || text_lines
       end
 
       def product_row
-        @rows.detect(&:product?)
+        @lines.detect(&:product?)
       end
 
       def extra_row
-        @rows.detect(&:extra?)
+        @lines.detect(&:extra?)
       end
 
-      def dimension_rows
-        @rows.select(&:dimension?)
+      def dimension_lines
+        @lines.select(&:dimension?)
       end
 
-      def text_rows
-        @rows.select(&:text?)
+      def text_lines
+        @lines.select(&:text?)
       end
 
-      def discount_rows
-        @rows.select(&:discount?)
+      def discount_lines
+        @lines.select(&:discount?)
       end
     end
   end

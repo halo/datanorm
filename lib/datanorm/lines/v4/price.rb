@@ -1,7 +1,7 @@
 module Datanorm
-  module Rows
+  module Lines
     module V4
-      class Price < ::Datanorm::Rows::Base
+      class Price < ::Datanorm::Lines::Base
         def to_s
           "[#{id}] PRICE-4 #{discounts.join(' | ')}"
         end
@@ -14,7 +14,7 @@ module Datanorm
           [columns[2..6],
            columns[11..15],
            columns[20..24]].map do
-            ::Datanorm::Rows::V4::Prices::Discount.new(_1)
+            ::Datanorm::Lines::V4::Prices::Discount.new(_1)
           end
         end
       end

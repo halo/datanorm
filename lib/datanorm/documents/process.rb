@@ -78,7 +78,7 @@ module Datanorm
       #   @prices = ::Datanorm::Prices::Container.new
       #   @items = ::Datanorm::Items::Container.new
 
-      #   rows do |row|
+      #   lines do |row|
       #     if row.price?
       #       @prices.add(row: row)
 

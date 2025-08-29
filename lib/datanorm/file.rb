@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Datanorm
-  # Loads and parses a datanorm file row by row.
+  # Parses a datanorm file row by row.
   class File
     include Datanorm::Logging
 
@@ -13,7 +13,7 @@ module Datanorm
     def header
       return @header if defined?(@header)
 
-      ::File.open(path, 'r:CP850') do |file|
+      ::File.open(path, "r:#{Encoding::CP850}") do |file|
         first_line = file.gets
         log { 'Parsing header line...' }
 
@@ -21,22 +21,19 @@ module Datanorm
       end
     end
 
-    def version
-      header.version
-    end
-
-    def rows
+    def lines
       line = 0
       ::CSV.foreach(path, **options) do |columns|
         line += 1
         next if line == 1 # Skip header, it's parsed separately
 
-        row = ::Datanorm::Parse.call(columns:, version:)
+        row = ::Datanorm::Lines::Parse.call(columns:, version:)
 
         yield row, line
       end
     end
 
+    # We want this, so that we can indicate how much progress has been done.
     def lines_count
       return @lines_count if defined?(@lines_count)
 
@@ -46,17 +43,9 @@ module Datanorm
       @lines_count
     end
 
-    def text_records?
-      return @text_records if defined?(@text_records)
-
-      log { 'Scanning for TEXT records... (this takes about 2 seconds per GB)' }
-      ::File.read(path, encoding: Encoding::CP850).scan("\nT;") do
-        log { 'TEXT records were found.' }
-        return @text_records = true
-      end
-
-      log { 'No TEXT records found.' }
-      @text_records = false
+    # Convenience shortcut.
+    def version
+      header.version
     end
 
     private

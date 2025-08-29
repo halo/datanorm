@@ -5,7 +5,7 @@
 #     context 'when Datanorm 4 Header' do
 #       it 'is a Header' do
 #         columns = ['V 050321                                                                                                                   04EUR']
-#         header = Datanorm::Rows::Header.new(['V 050321                                                                                                                   04EUR'])
+#         header = Datanorm::Lines::Header.new(['V 050321                                                                                                                   04EUR'])
 
 #         row = described_class.call(columns, header: header)
 
@@ -19,7 +19,7 @@
 #     context 'when Datanorm 5 Header' do
 #       it 'is a Header' do
 #         columns = 'V;050;A;20201210;EUR;Produktkatalog 2021;ACME INC.;;;;;;;;;'.split(';')
-#         header = Datanorm::Rows::Header.new('V;050;A;20201210;EUR;Produktkatalog 2021;ACME INC.;;;;;;;;;'.split(';'))
+#         header = Datanorm::Lines::Header.new('V;050;A;20201210;EUR;Produktkatalog 2021;ACME INC.;;;;;;;;;'.split(';'))
 
 #         row = described_class.call(columns, header: header)
 
@@ -33,7 +33,7 @@
 #     context 'when Datanorm 4 Text' do
 #       it 'is a Text' do
 #         columns = 'T;N;00022926;;27;;verlegbar;28;;Lieferumfang;'.split(';')
-#         header = Datanorm::Rows::Header.new(['V 050321                                                                                                                   04EUR'])
+#         header = Datanorm::Lines::Header.new(['V 050321                                                                                                                   04EUR'])
 
 #         row = described_class.call(columns, header: header)
 
@@ -46,7 +46,7 @@
 #     context 'when Datanorm 5 Text' do
 #       it 'is a Text' do
 #         columns = 'T;N;T020-876;1;13;Die Box muss direkt an der linken;'.split(';')
-#         header = Datanorm::Rows::Header.new('V;050;A;20201210;EUR;Produktkatalog 2021;ACME INC.;;;;;;;;;'.split(';'))
+#         header = Datanorm::Lines::Header.new('V;050;A;20201210;EUR;Produktkatalog 2021;ACME INC.;;;;;;;;;'.split(';'))
 
 #         row = described_class.call(columns, header: header)
 
@@ -60,7 +60,7 @@
 #     context 'when Datanorm 4 Primary' do
 #       it 'is a Primary' do
 #         columns = 'A;N;PES178 AHL;50;Seitenwand Pega speziell 780x1850mm;silber hochglanz;1;0;ST;79900;G5CD; ; ;'.split(';')
-#         header = Datanorm::Rows::Header.new(['V 050321                                                                                                                   04EUR'])
+#         header = Datanorm::Lines::Header.new(['V 050321                                                                                                                   04EUR'])
 
 #         row = described_class.call(columns, header: header)
 
@@ -77,7 +77,7 @@
 #     context 'when Datanorm 4 Extra' do
 #       it 'is a Extra' do
 #         columns = 'B;N;VXFHBMK046500;SONNENSCHUTZ;1467597; ;0;0;0; ; ; ;0;0; ; ;'.split(';')
-#         header = Datanorm::Rows::Header.new(['V 050321                                                                                                                   04EUR'])
+#         header = Datanorm::Lines::Header.new(['V 050321                                                                                                                   04EUR'])
 
 #         row = described_class.call(columns, header: header)
 
@@ -91,7 +91,7 @@
 #     context 'when Datanorm 5 Primary' do
 #       it 'is a Primary' do
 #         columns = 'A;N;100078941;Sensorkabel rot;SKM-95/03 ;m;1;1;760;14;008;008.840;;;;TELENOT;100078941;SKM-95/03 Rot;;;;;4;TNT2977;;;;;;'.split(';')
-#         header = Datanorm::Rows::Header.new('V;050;A;20201210;EUR;Produktkatalog 2021;ACME INC.;;;;;;;;;'.split(';'))
+#         header = Datanorm::Lines::Header.new('V;050;A;20201210;EUR;Produktkatalog 2021;ACME INC.;;;;;;;;;'.split(';'))
 
 #         row = described_class.call(columns, header: header)
 
@@ -108,7 +108,7 @@
 #     context 'when Datanorm 4 Dimension' do
 #       it 'is a Dimension' do
 #         columns = 'D;N;DEWURK1003F;11;F;;1 Schublade oben mit Siphonausschnitt;12;F;;1 Schublade unten;'.split(';')
-#         header = Datanorm::Rows::Header.new(['V 050321                                                                                                                   04EUR'])
+#         header = Datanorm::Lines::Header.new(['V 050321                                                                                                                   04EUR'])
 
 #         row = described_class.call(columns, header: header)
 
@@ -122,7 +122,7 @@
 #     context 'when Datanorm 4 Price' do
 #       it 'is a Price' do
 #         columns = 'P;A;QATA207569016;1;300;1;3700;;;;;QLF2002009016;1;240;1;0;;;;;QLF2002009016;2;88;;;;;;;'.split(';')
-#         header = Datanorm::Rows::Header.new(['V 050321                                                                                                                   04EUR'])
+#         header = Datanorm::Lines::Header.new(['V 050321                                                                                                                   04EUR'])
 
 #         row = described_class.call(columns, header: header)
 

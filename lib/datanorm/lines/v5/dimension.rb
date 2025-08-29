@@ -1,7 +1,7 @@
 module Datanorm
-  module Rows
+  module Lines
     module V5
-      class Dimension < ::Datanorm::Rows::Base
+      class Dimension < ::Datanorm::Lines::Base
         def to_s
           "[#{id}] DIMENSION-5 - #{columns}"
         end

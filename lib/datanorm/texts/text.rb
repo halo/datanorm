@@ -1,19 +1,19 @@
 module Datanorm
   module Texts
     class Text
-      attr_reader :id, :rows
+      attr_reader :id, :lines
 
       def initialize(id:)
         @id = id
-        @rows = {}
+        @lines = {}
       end
 
       def add(row:)
-        @rows[row.line_number] = row.content
+        @lines[row.line_number] = row.content
       end
 
       def content
-        @rows.sort.map(&:last).join(' ')
+        @lines.sort.map(&:last).join(' ')
       end
     end
   end

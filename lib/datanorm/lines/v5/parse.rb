@@ -1,30 +1,30 @@
 # frozen_string_literal: true
 
 module Datanorm
-  module Rows
+  module Lines
     module V5
       class Parse
         include Calls
 
         CLASSES = {
-          # 'V' => Datanorm::Rows::V5::Header,
-          'A' => Datanorm::Rows::V5::Product
-          # 'B' => Datanorm::Rows::V5::Extra, # In v4 this has product data, in V5 only DELETION notice.
-          # 'T' => Datanorm::Rows::V5::Text,
-          # 'D' => Datanorm::Rows::V5::Dimension,
-          # 'P' => Datanorm::Rows::V5::Price,
-          # 'C' => Datanorm::Rows::Base,
-          # 'S' => Datanorm::Rows::Base
+          # 'V' => Datanorm::Lines::V5::Header,
+          'A' => Datanorm::Lines::V5::Product
+          # 'B' => Datanorm::Lines::V5::Extra, # In v4 this has product data, in V5 only DELETION notice.
+          # 'T' => Datanorm::Lines::V5::Text,
+          # 'D' => Datanorm::Lines::V5::Dimension,
+          # 'P' => Datanorm::Lines::V5::Price,
+          # 'C' => Datanorm::Lines::Base,
+          # 'S' => Datanorm::Lines::Base
         }.freeze
 
         param :columns
 
         def call
-          klass = CLASSES[columns.first[0]] || Datanorm::Rows::Base
+          klass = CLASSES[columns.first[0]] || Datanorm::Lines::Base
           klass.new(columns)
 
           # identifier, columns = parse_line
-          # row_class = CLASSES[identifier] || Datanorm::Rows::Base
+          # row_class = CLASSES[identifier] || Datanorm::Lines::Base
           # row_class.new(columns)
         end
 

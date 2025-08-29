@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
 module Datanorm
-  module Rows
+  module Lines
     module V4
       # Represents one line containting a product main name, quantity unit and price.
-      class Product < ::Datanorm::Rows::Base
+      class Product < ::Datanorm::Lines::Base
         def to_s
           "PRODUCT   [#{id}] <#{item_title}> " \
             "<#{raw_quantity unless raw_quantity.to_s == quantity} " \

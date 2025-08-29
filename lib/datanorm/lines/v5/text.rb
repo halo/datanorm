@@ -1,12 +1,12 @@
 module Datanorm
-  module Rows
-    module V4
-      class Dimension < ::Datanorm::Rows::Base
+  module Lines
+    module V5
+      class Text < ::Datanorm::Lines::Base
         def to_s
-          "DIMENSION [#{id}] #{line_number.to_s.rjust(3)} #{content.encode('UTF-8', 'CP850').gsub("\n", '⏎')}"
+          "[#{id}] TEXT-5 #{line_number} #{content}"
         end
 
-        def dimension?
+        def text?
           true
         end
 
@@ -15,11 +15,11 @@ module Datanorm
         end
 
         def line_number
-          columns[3].to_i
+          columns[4].to_i
         end
 
         def content
-          [columns[6], columns[10]].join("\n")
+          columns[5]
         end
 
         def <=>(other)

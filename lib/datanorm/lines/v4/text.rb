@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
 module Datanorm
-  module Rows
+  module Lines
     module V4
       # Wraps a line of a DATANORM file that represents one line of a product description.
       # Also known as Langtextsatz.
-      class Text < ::Datanorm::Rows::Base
+      class Text < ::Datanorm::Lines::Base
         def to_s
           "TEXT [#{id}] <#{line_number}> #{content.encode('UTF-8', 'CP850').gsub("\n", '⏎')}"
         end

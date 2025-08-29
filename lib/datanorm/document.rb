@@ -22,7 +22,7 @@ module Datanorm
     end
 
     def items(&)
-      rows do |pass, row, index|
+      lines do |pass, row, index|
         if (index % 50_000).zero?
           percentage = ((index.to_f / file.lines_count) * 100).round(1)
           log { "Processing. pass #{pass} #{percentage}% #{index}/#{file.lines_count}" }
@@ -37,13 +37,13 @@ module Datanorm
 
     attr_reader :path, :project_id
 
-    def rows
+    def lines
       index = 0
 
-      passes.each do |pass|
+      %i[preprocess standard].each do |pass|
         log { "Beginning pass #{pass}" }
 
-        file.rows do |row|
+        file.lines do |row|
           index += 1
           yield pass, row, index
 
@@ -54,16 +54,8 @@ module Datanorm
       end
     end
 
-    def passes
-      if file.text_records?
-        %i[preprocess standard]
-      else
-        %i[standard]
-      end
-    end
-
     def total_index
-      file.lines_count * passes.size
+      file.lines_count * 2
     end
 
     def file
