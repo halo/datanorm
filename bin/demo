@@ -21,7 +21,7 @@ document = Datanorm::Document.new(path:)
 # Loop over products
 bar = TTY::ProgressBar.new(':percent [:bar] :current/:total :elapsed´')
 
-document.each do |progress, item|
+document.each do |item, progress|
   if item
     bar.finish
     puts item.to_json

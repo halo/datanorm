@@ -12,13 +12,13 @@ class TheFileTest < Minitest::Test
   end
 
   def test_v4_header
-    file = Datanorm::File.new(path: TestAsset.datanorm4_with_texts_path)
+    file = Datanorm::File.new(path: TestAsset.v4_with_texts)
 
     assert_equal 4, file.header.version.number
   end
 
   def test_v4_lines
-    file = Datanorm::File.new(path: TestAsset.datanorm4_with_texts_path)
+    file = Datanorm::File.new(path: TestAsset.v4_with_texts)
 
     lines = file.to_a
 
@@ -26,7 +26,7 @@ class TheFileTest < Minitest::Test
   end
 
   def test_v4_lines_count
-    file = Datanorm::File.new(path: TestAsset.datanorm4_with_texts_path)
+    file = Datanorm::File.new(path: TestAsset.v4_with_texts)
 
     assert_equal 34, file.lines_count
   end

@@ -14,7 +14,7 @@ module Datanorm
 
         ::File.foreach(products_file) do |json|
           progress.increment!
-          yield progress, ::Datanorm::Documents::Assembles::Product.new(json:, workdir:)
+          yield ::Datanorm::Documents::Assembles::Product.new(json:, workdir:), progress
         end
       end
 

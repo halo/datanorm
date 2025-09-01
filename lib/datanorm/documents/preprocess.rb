@@ -18,7 +18,7 @@ module Datanorm
           ::Datanorm::Documents::Preprocesses::Process.call(workdir:, record:)
 
           progress.increment!
-          yield progress
+          yield nil, progress # No items to yield during preprocess.
         end
       end
 

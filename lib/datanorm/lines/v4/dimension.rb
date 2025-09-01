@@ -26,15 +26,15 @@ module Datanorm
         end
 
         def id
-          columns[2]
+          encode columns[2]
         end
 
         def line_number
-          columns[3].to_i
+          encode columns[3].to_i
         end
 
         def content
-          [columns[6], columns[10]].join("\n")
+          [encode(columns[6]), encode(columns[10])].join("\n")
         end
 
         def <=>(other)

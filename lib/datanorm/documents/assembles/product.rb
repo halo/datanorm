@@ -10,6 +10,7 @@ module Datanorm
         def initialize(json:, workdir:)
           @json = JSON.parse(json, symbolize_names: true)
           @workdir = workdir
+          load!
         end
 
         def id
@@ -21,7 +22,11 @@ module Datanorm
         end
 
         def description
-          dimension_content || text_content
+          @dimension_content || @text_content
+        end
+
+        def cents
+          json[:cents]
         end
 
         def text_id
@@ -44,22 +49,27 @@ module Datanorm
           }
         end
 
-        def dimension_content
+        def load!
+          @dimension_content = dimension_content!
+          @text_content = text_content!
+        end
+
+        def dimension_content!
           path = workdir.join('D', "#{Base64.urlsafe_encode64(id.to_s)}.txt")
           if path.file?
             path.read
           else
-            # log { "No dimension found at #{path}" }
+            log { "No dimension found at #{path}" }
             nil
           end
         end
 
-        def text_content
+        def text_content!
           path = workdir.join('T', "#{Base64.urlsafe_encode64(text_id.to_s)}.txt")
           if path.file?
             path.read
           else
-            # log { "No text found at #{path}" }
+            log { "No text found at #{path}" }
             nil
           end
         end
@@ -70,18 +80,6 @@ end
 
 __END__
 
-
-def text_id
-  product_row&.text_id
-end
-
-def quantity
-  product_row&.quantity
-end
-
-def quantity_unit
-  product_row&.quantity_unit
-end
 
 def matchcode
   extra_row&.matchcode

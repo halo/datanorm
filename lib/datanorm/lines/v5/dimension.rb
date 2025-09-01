@@ -13,7 +13,7 @@ module Datanorm
         end
 
         def id
-          columns[2]
+          encode columns[2]
         end
 
         def content

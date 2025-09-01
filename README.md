@@ -92,12 +92,12 @@ document = Datanorm::Document.new(path: 'datanorm.001')
 puts document.header
 puts document.version
 
-document.each do |progress, item|
+document.each do |item, progress|
   # Once pre-processing is complete, you'll start to get items here
-  puts item
+  puts item # <- can be nil
 
   # You can always look at the progress to see what's going on.
-  puts progress if progress.significant? # So your STDOUT doesn't get spammed.
+  puts progress if progress.significant? # Throttling, so your STDOUT doesn't get spammed.
 end
 ```
 
@@ -115,6 +115,8 @@ file.each do |record, line_number|
 end
 ```
 
+**Debugging**
+
 You can set the ENV variable `DEBUG_DATANORM=1` for verbose logging output.
 You can also inspect the denormalization cache located at `/tmp/datanorm_ruby`.
 It won't be automatically deleted if you set the `DEBUG_DATANORM` flag.
@@ -129,7 +131,7 @@ Throughout the code, the following terms are used:
 
 Run unit tests with `bin/tests`.
 
-The test suite is yet somewhat wanting.
+To get you started, you can run `bin/demo path/to/your/datanorm.002` to show its contents.
 
 ## Open Source Maintenance
 
