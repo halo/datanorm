@@ -9,11 +9,7 @@ module TestAsset
   end
 
   def self.datanorm4_with_texts_path
-    File.join(__dir__, 'assets/datanorm4_with_texts.001')
-  end
-
-  def self.v5_first_texts_then_products_path
-    File.join(__dir__, 'assets/v5_first_texts_then_products.001')
+    File.join(__dir__, 'assets/v4_with_texts.001')
   end
 end
 

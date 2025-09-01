@@ -64,9 +64,9 @@ If you 're out of luck, there are a bunch of `T` records at the beginning of the
 You, as a Ruby developer, would most likely do something like this:
 
 ```ruby
-Datanorm::Document.new(path:).items do |item|
+Datanorm::Document.new(path:).each do |item|
   # Here you would have *one* Object that represents
-  # *one*  product and *all*  its attributes.
+  # *one* product and *all*  its attributes.
 end
 ```
 
@@ -76,7 +76,7 @@ That's what we're doing. For that to work, however, we need to
 * remember, categorize and cache the data (on disk, because you don't want 3 GB in RAM)
 * then enumerate over every product
 * while doing so, gather the referenced attributes that belong to each product
-* wrap it all in a Ruby object and yield it to you
+* wrap it all in a Ruby object and yield it as UTF-8 to you
 
 I know there are smart ways to make this faster, but that only works if your Datanorm file is structured in a certain way, which I can't guarantee, and I want to avoid the complexity of detecting various kinds of structures.
 
@@ -92,12 +92,16 @@ document = Datanorm::Document.new(path: 'datanorm.001')
 puts document.header
 puts document.version
 
-document.items do |item|
+document.each do |progress, item|
+  # Once pre-processing is complete, you'll start to get items here
   puts item
+
+  # You can always look at the progress to see what's going on.
+  puts progress if progress.significant? # So your STDOUT doesn't get spammed.
 end
 ```
 
-In case you want the Datanorm file one line at a time, you can use this:
+In case you want the raw Datanorm file one line at a time as Ruby Objects, you can use this:
 
 ```ruby
 file = Datanorm::File.new(path: 'datanorm.001')
@@ -106,12 +110,14 @@ puts file.header
 puts file.version
 puts file.lines_count
 
-file.lines.each do |record, line_number|
+file.each do |record, line_number|
   puts record
 end
 ```
 
 You can set the ENV variable `DEBUG_DATANORM=1` for verbose logging output.
+You can also inspect the denormalization cache located at `/tmp/datanorm_ruby`.
+It won't be automatically deleted if you set the `DEBUG_DATANORM` flag.
 
 ## Development
 
@@ -123,6 +129,8 @@ Throughout the code, the following terms are used:
 
 Run unit tests with `bin/tests`.
 
+The test suite is yet somewhat wanting.
+
 ## Open Source Maintenance
 
 This software is release under the MIT license (see LICENSE.md).
@@ -130,4 +138,3 @@ This software is release under the MIT license (see LICENSE.md).
 I already anticipate people sending me their various Datanorm files, thinking that I can fix their problems, but I really don't want to 😂.
 
 Let me be clear: Nobody should use this data format. It's from the digital stone age. If you have to parse it in Ruby and need more features, I'll gladly welcome a pull request with proper test coverage.
-

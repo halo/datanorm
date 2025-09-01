@@ -6,7 +6,7 @@ module Datanorm
       # Represents one line containting a product main name, quantity unit and price.
       class Product < ::Datanorm::Lines::Base
         def to_s
-          "PRODUCT   [#{id}] <#{item_title}> " \
+          "PRODUCT   [#{id}] <#{title}> " \
             "<#{raw_quantity unless raw_quantity.to_s == quantity} " \
             "<#{quantity}) #{quantity_unit}> EUR #{price} [#{text_id}]"
         end
@@ -27,7 +27,7 @@ module Datanorm
           BigDecimal(columns[9]) / 100
         end
 
-        def item_title
+        def title
           columns[4..5].join(' ').strip
         end
 
@@ -42,6 +42,10 @@ module Datanorm
           when 2 then 100
           when 3 then 1000
           end
+        end
+
+        def as_json
+          { id:, text_id:, price:, title:, quantity_unit:, quantity: }
         end
 
         private

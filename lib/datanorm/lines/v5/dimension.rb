@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Datanorm
   module Lines
     module V5

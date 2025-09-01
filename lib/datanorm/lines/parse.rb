@@ -19,13 +19,13 @@ module Datanorm
 
       option :version
       option :columns
-      option :line_number
+      option :source_line_number
 
       def call
         if version.four?
-          ::Datanorm::Lines::V4::Parse.call(columns:, line_number:)
+          ::Datanorm::Lines::V4::Parse.call(columns:, source_line_number:)
         elsif version.five?
-          ::Datanorm::Lines::V5::Parse.call(columns:, line_number:)
+          ::Datanorm::Lines::V5::Parse.call(columns:, source_line_number:)
         end
       end
     end

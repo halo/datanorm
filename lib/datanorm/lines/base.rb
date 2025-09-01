@@ -6,11 +6,11 @@ module Datanorm
     class Base
       # Array that holds the attributes of one line.
       # If there are no semicolons, this Array has only one long String in it.
-      attr_reader :columns
+      attr_reader :columns, :source_line_number
 
-      def initialize(columns:, line_number:)
+      def initialize(columns:, source_line_number:)
         @columns = columns
-        @line_number = line_number
+        @source_line_number = source_line_number
       end
 
       # Usually a product number.
@@ -21,9 +21,24 @@ module Datanorm
         '?'
       end
 
+      # E.g. "T", "A"
+      def kind
+        columns[0]
+      end
+
       # Overridden in subclasses.
       def to_s
         "[#{id}] UNKNOWN #{columns}"
+      end
+
+      def to_json(...)
+        as_json.to_json(...)
+      end
+
+      def encode(thing)
+        return if thing.nil? || thing.to_s.empty?
+
+        thing.to_s.encode('UTF-8')
       end
 
       # Type querying. Overridden in subclass to return true.
@@ -37,6 +52,10 @@ module Datanorm
       end
 
       def extra?
+        false
+      end
+
+      def times?
         false
       end
 

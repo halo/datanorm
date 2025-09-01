@@ -12,10 +12,12 @@ class DocumentTest < Minitest::Test
   end
 
   def test_items
-    document = Datanorm::Document.new(path: TestAsset.v5_first_texts_then_products_path)
+    document = Datanorm::Document.new(path: TestAsset.datanorm4_with_texts_path)
 
-    # item = document.first
+    items = document.to_a
 
-    # assert_predicate item, :product?
+    puts items
+
+    assert_operator items.size, :>, 3
   end
 end

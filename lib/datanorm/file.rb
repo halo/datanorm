@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
 module Datanorm
-  # Parses a datanorm file line by line.
+  # Parses a datanorm file line by line and wraps them in Ruby objects.
   class File
     include Datanorm::Logging
+    include Enumerable
 
     def initialize(path:)
       log { "Loading file `#{path}`" }
@@ -21,14 +22,19 @@ module Datanorm
       end
     end
 
-    def lines
+    # Convenience shortcut.
+    def version
+      header.version
+    end
+
+    def each
       line_number = 0
 
       ::CSV.foreach(path, **options) do |columns|
         line_number += 1
         next if line_number == 1 # Skip header, it's parsed separately
 
-        yield ::Datanorm::Lines::Parse.call(version:, columns:, line_number:)
+        yield ::Datanorm::Lines::Parse.call(version:, columns:, source_line_number: line_number)
       end
     end
 
@@ -37,14 +43,11 @@ module Datanorm
       return @lines_count if defined?(@lines_count)
 
       log { 'Scanning number of total lines... (this takes about 2 seconds per GB)' }
-      @lines_count = ::File.read(path, encoding: Encoding::CP850).scan("\n").length
+      @lines_count = 0
+      # `foreach` doesn't load the entire file into memory.
+      ::File.foreach(path, encoding: Encoding::CP850) { @lines_count += 1 }
       log { "Scan complete, counted #{@lines_count} lines." }
       @lines_count
-    end
-
-    # Convenience shortcut.
-    def version
-      header.version
     end
 
     private

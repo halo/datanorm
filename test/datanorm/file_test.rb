@@ -20,8 +20,7 @@ class TheFileTest < Minitest::Test
   def test_v4_lines
     file = Datanorm::File.new(path: TestAsset.datanorm4_with_texts_path)
 
-    lines = []
-    file.lines { lines << it }
+    lines = file.to_a
 
     assert_predicate lines[0], :product?
   end

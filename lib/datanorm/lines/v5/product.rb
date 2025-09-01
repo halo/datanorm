@@ -18,11 +18,15 @@ module Datanorm
           columns[23]
         end
 
-        def price
-          BigDecimal(columns[8]) / 100
+        def cents
+          columns[8].to_i
         end
 
-        def item_title
+        def price
+          BigDecimal(cents / 100)
+        end
+
+        def title
           columns[3..4].join(' ').strip
         end
 
@@ -32,6 +36,10 @@ module Datanorm
 
         def quantity
           columns[6].to_i.nonzero?
+        end
+
+        def as_json
+          { id:, text_id:, cents:, title:, quantity_unit:, quantity: }
         end
       end
     end

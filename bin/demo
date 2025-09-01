@@ -1,15 +1,34 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
+ENV['DEBUG_DATANORM'] = 'true' if ARGV.include?('--debug')
+
 require 'bundler/setup'
 require 'datanorm'
+require 'tty-progressbar'
 
-ENV['DEBUG_DATANORM'] = 'true'
-
+# Select Datanorm input file
 path = ARGV.first
-document1 = Datanorm::Document.new(path:)
 
-document1.each do |item|
-  puts item
-  break if item.index > 100
+if !path || path.empty?
+  puts 'Please provide a path to a Datanorm file as argument. Add --debug for verbose output.'
+  exit
+end
+
+# Instantiate Datanorm
+document = Datanorm::Document.new(path:)
+
+# Loop over products
+bar = TTY::ProgressBar.new(':percent [:bar] :current/:total :elapsed´')
+
+document.each do |progress, item|
+  if item
+    bar.finish
+    puts item.to_json
+  else
+    # During pre-process there is no `item` yielded.
+    puts progress.title if progress.current == 1
+    bar.configure { it.total = progress.total }
+    bar.current = progress.current
+  end
 end

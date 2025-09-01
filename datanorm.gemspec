@@ -22,5 +22,4 @@ Gem::Specification.new do |s|
   s.add_dependency 'csv'
   s.add_dependency 'logger'
   s.add_dependency 'tron'
-  s.add_dependency 'tty-progressbar'
 end
