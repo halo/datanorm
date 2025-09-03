@@ -53,7 +53,7 @@ module Datanorm
           # Instead, we choose one or the other.
           return dimension_content if dimension_content && !dimension_content.strip.empty?
 
-          text_content
+          text_reference.read
         end
 
         # -----------------------
@@ -84,9 +84,23 @@ module Datanorm
         def prices
           return @prices if defined?(@prices)
 
-          @prices = prices_content&.split("\n")&.map do |json|
+          @prices = price_reference.read&.map do |json|
             ::Datanorm::Documents::Assembles::Price.new(json:)
           end || []
+        end
+
+        # ----------------------
+        # Calculated Final Price
+        # ----------------------
+
+        # The cheapest of all prices is probably what we pay.
+        def cheapest_price
+          [price, *prices.map(&:price_after_discount)].min
+        end
+
+        # The most expensive of all prices is probably what we sell for.
+        def most_expensive_price
+          [price, *prices.map(&:price)].max
         end
 
         # -----------------
@@ -94,19 +108,19 @@ module Datanorm
         # -----------------
 
         def matchcode
-          extra_json[:matchcode]
+          extra_reference.read[:matchcode]
         end
 
         def alternative_id
-          extra_json[:alternative_id]
+          extra_reference.read[:alternative_id]
         end
 
         def ean
-          extra_json[:ean]
+          extra_reference.read[:ean]
         end
 
         def category_id
-          extra_json[:category_id]
+          extra_reference.read[:category_id]
         end
 
         # -------
@@ -119,7 +133,7 @@ module Datanorm
 
         def as_json
           # Adding referenced attributes that were cached to disk during preprocessing.
-          json.merge(description:, prices: prices.map(&:as_json)).merge(extra_json)
+          json.merge(description:, prices: prices.map(&:as_json)).merge(extra_reference.read)
         end
 
         def to_json(...)
@@ -143,32 +157,24 @@ module Datanorm
           end
         end
 
-        def text_content
+        def text_reference
           return unless text_id
-          return @text_content if defined?(@text_content)
 
-          @text_content = begin
-            path = workdir.join('T', ::Datanorm::Helpers::Filename.call(text_id))
-            path.read if path.file?
-          end
+          @text_reference ||= ::Datanorm::Documents::Assembles::Reference.new(
+            path: workdir.join('T', ::Datanorm::Helpers::Filename.call(text_id))
+          )
         end
 
-        def extra_json
-          return @extra_json if defined?(@extra_json)
-
-          @extra_json = begin
-            path = workdir.join('B', ::Datanorm::Helpers::Filename.call(id))
-            JSON.parse(path.read, symbolize_names: true) if path.file?
-          end
+        def extra_reference
+          @extra_reference ||= ::Datanorm::Documents::Assembles::Reference.new(
+            path: workdir.join('B', ::Datanorm::Helpers::Filename.call(id)), parse_json: true
+          )
         end
 
-        def prices_content
-          return @prices_content if defined?(@prices_content)
-
-          @prices_content = begin
-            path = workdir.join('P', ::Datanorm::Helpers::Filename.call(id))
-            path.read if path.file?
-          end
+        def price_reference
+          @price_reference ||= ::Datanorm::Documents::Assembles::Reference.new(
+            path: workdir.join('P', ::Datanorm::Helpers::Filename.call(id)), split_newlines: true
+          )
         end
       end
     end

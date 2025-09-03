@@ -105,6 +105,9 @@ class DocumentTest < Minitest::Test
     refute_predicate items[0].prices[1], :wholesale?
     refute_predicate items[0].prices[1], :percentage_discount?
 
+    assert_in_delta(0.88, items[0].cheapest_price)
+    assert_equal 3, items[0].most_expensive_price
+
     assert_equal 'QBMK10208R', items[1].id
     assert_equal 'Tehalit LF2002009016 LF-Kanal 20x20 vws LF-Kanal, PVC, verkehrsweiß',
                  items[1].title
@@ -132,5 +135,8 @@ class DocumentTest < Minitest::Test
     assert_in_delta(547.9512, items[1].prices[0].price_after_discount)
     refute_predicate items[1].prices[0], :retail?
     refute_predicate items[1].prices[0], :no_discount?
+
+    assert_in_delta(2.4, items[1].cheapest_price)
+    assert_in_delta(2283.13, items[1].most_expensive_price)
   end
 end

@@ -28,6 +28,9 @@ Metrics/BlockLength:
 Metrics/MethodLength:
   Exclude:
     - '**/test/**/*_test.rb'
+Metrics/ClassLength:
+  Exclude:
+    - '**/test/**/*_test.rb'
 
 Minitest/MultipleAssertions:
   Exclude:
