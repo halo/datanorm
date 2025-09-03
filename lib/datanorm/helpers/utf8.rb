@@ -8,8 +8,10 @@ module Datanorm
 
       param :input
 
+      # I sometimes encounter single spaces to indicate nil in Datanorm.
+      # So let's filter out those, too.
       def call
-        return if input.nil? || input.to_s.empty?
+        return if input.nil? || input == ' ' || input.to_s.empty?
 
         input.to_s.encode('UTF-8')
       end

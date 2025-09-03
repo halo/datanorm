@@ -14,7 +14,9 @@ module Datanorm
       # [0] Artikelnummer
       #
       # [1] Preiskennzeichen (analogous to `Datanorm::Lines::V5::Product`)
-      #     1=retail/list, 2=wholesale/net (V5 also has 9=ask-for-price)
+      #     1=wholesale (higher end-customer price)
+      #     2=retail (lower bulk price)
+      #     9=ask-for-price (only V5)
       #     Some documentation says this means 1=gross and 2=net but I cannot confirm that,
       #     the prices are always net prices and the retail/wholesale fits the bill.
       #
@@ -46,12 +48,12 @@ module Datanorm
         # Price
         # -----
 
-        def retail_price?
-          columns[1] == '1'
+        def retail?
+          columns[1] == '2'
         end
 
-        def wholesale_price?
-          columns[1] == '2'
+        def wholesale?
+          columns[1] == '1'
         end
 
         def cents
@@ -68,7 +70,10 @@ module Datanorm
 
         # If this is true, then `cents` represents the final price.
         def no_discount?
-          columns[3] == '2'
+          return true if columns[3] == '2'
+
+          # Fallback: If not defined, assume no discount.
+          columns[3].nil? || columns[3].empty?
         end
 
         # If this is true, a discount should be applied to `cents`.
@@ -77,24 +82,8 @@ module Datanorm
         end
 
         # How much of a discount do we get?
-        def discount_percentage
-          return unless percentage_discount?
-
-          # 3700 == 37% == 0.37
-          BigDecimal(columns[4]) / 100 / 100
-        end
-
-        # What is the final price after the discount?
-        def discounted_price
-          return cents if no_discount?
-          raise "Unsupported Discount #{self}" unless percentage_discount?
-
-          price * (1 - discount_percentage)
-        end
-
-        # Convenience conversion shortcut.
-        def discounted_cents
-          (discounted_price * 100).to_i
+        def discount_percentage_integer
+          columns[4]&.to_i
         end
 
         # -------
@@ -105,23 +94,16 @@ module Datanorm
           "<Price #{as_json}>"
         end
 
-        def <=>(other)
-          precedence <=> other.precedence
-        end
-
-        # So we can distinguish between multiple conflicting prices.
-        def precedence
-          return 2 if no_discount?
-          return 1 if percentage_discount?
-
-          0
-        end
-
+        # We don't need the Product ID here.
+        # Our "parent" Priceset has the ID and all `Price` instances refer to the same product.
         def as_json
           {
-            id:,
-            cents:,
-            discounted_cents:
+            is_retail: retail?,
+            is_wholesale: wholesale?,
+            is_no_discount: no_discount?,
+            is_percentage_discount: percentage_discount?,
+            discount_percentage: discount_percentage_integer,
+            cents:
           }
         end
 

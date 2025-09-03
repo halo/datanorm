@@ -18,6 +18,7 @@ module Datanorm
       def self.inherited(subclass)
         kind_method = "kind_#{subclass.name.split('::').last.downcase}?"
 
+        remove_method(kind_method) if method_defined?(kind_method) # Avoid warnings during tests
         define_method(kind_method) do
           self.class.name.split('::').last.downcase == subclass.name.split('::').last.downcase
         end

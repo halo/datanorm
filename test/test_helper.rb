@@ -16,6 +16,10 @@ module TestAsset
   def self.v4_products_before_texts
     File.join(__dir__, 'assets/v4_products_before_texts.001')
   end
+
+  def self.v5_first_texts_then_products
+    File.join(__dir__, 'assets/v5_first_texts_then_products.001')
+  end
 end
 
 require 'datanorm'

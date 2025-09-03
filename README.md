@@ -9,17 +9,19 @@ Disadvantages:
 * One line of text (e.g. a product name or description) is limited to 40 characters. This is because of monospace fonts where a quotation or an invoice would have column limitations. There is no reliable way to convert this into flowing text (mostly because of bullet lists).
 
 * One product can only have one price.
-  So the suppliers will typically export multiple Datanorm files to their clients: one with list prices, one with discounted buying prices and one with recommended selling prices.
+  So the suppliers will typically export multiple Datanorm files to their clients: one with list prices, one with discounted buying prices and one with recommended selling prices. Or, they'll provide a second file that only contains various prices.
 
 * The file encoding is not UTF-8 but `CP850`, common in DOS in Western Europe.
 
-* There are cross-references between lines within a single Datanorm file, that make parsing very complicated and inefficient (Datanorm files are commonly between 1 MB and 3 GB large).
+* There are cross-references between lines (and even parts of lines) within a single Datanorm file, that make parsing very complicated and inefficient (Datanorm files are commonly between 1 MB and 3 GB large).
 
 * Version 4, still most commonly used, has special quirks, such as only allowing a product quantity unit of 1, 10, 100 or 1000. So you cannot have a product sold in packs of, say 25.
 
-* One line in the file for prices "P" in version 5 may actually be a set of prices for multiple different products, thus separated by new lines at seemingly random places in the data.
+* One line in the file for prices "P" may actually be a set of prices for up to three same or different products. Thus data that belongs together separated by new lines at seemingly random places.
 
 * Over the years, people started working around the standard to overcome its limitations. In other words, every company that exports Datanorm, uses data fields in different ways to communicate different things and many structure the content of the file differently. For example, one file for creating products, one for amending existing products and one for doing both. Another example is to use product descriptions and product category descriptions interchangeably, and using free text fields to override normalized values that are wrong.
+
+* To my knowledge, there is no documentation publicly available on the Internet. Maybe old books in some library have it.
 
 If you were ever wondering why Germany has so much bureaucracy, it's because they like to cling on to things.
 
@@ -51,7 +53,7 @@ In Datanorm, *one line* in the file represents one record. The most common ones 
 
 # About this Rubygem
 
-What you find here is the minimal Ruby code required to parse and loop over the content of a Datanorm file and works with both version 4 and 5.
+What you find here is the minimal Ruby code required to parse and loop over the content of a Datanorm file and works predominantly with version 4. Version 5 support is not fully implemented.
 
 It does not cover all features that Datanorm has, but it supports everything to get you started with the most common data attributes.
 
@@ -64,6 +66,8 @@ As explained above, there are cross-references within the Datanorm file, where o
 If you're lucky, the file only contains `A` and `D` records that are located closely to one another, which makes linear file parsing somewhat possible.
 
 If you 're out of luck, there are a bunch of `T` records at the beginning of the file, then some `A` and `B` records, or the other way around.
+
+If you have `P` records, it's really complex, because one `P` record can represent one price of one product, or two different prices for the same product, or three different prices for three entirely different products.
 
 You, as a Ruby developer, would most likely do something like this:
 
@@ -107,7 +111,7 @@ document.each do |product, progress|
 end
 ```
 
-In case you want the raw Datanorm file one line at a time as Ruby Objects, you can use this:
+In case you only want the raw Datanorm file one line at a time as Ruby Objects, you can use this:
 
 ```ruby
 file = Datanorm::File.new(path: 'datanorm.001')
@@ -138,6 +142,8 @@ Throughout the code, the following terms are used:
 Run unit tests with `bin/tests`.
 
 To get you started, you can run `bin/demo path/to/your/datanorm.001` to show its contents.
+
+There are a few example Datanorm files in the test folder, but their characters don't always have the standard Datanorm CP850 encoding (through my tooling I often accidentally convert to UTF-8 or ASCII). Fĭx iẗ iƒ ȳou çaƞ.
 
 ## Open Source Maintenance
 

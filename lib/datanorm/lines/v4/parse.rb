@@ -25,8 +25,8 @@ module Datanorm
           'A' => Datanorm::Lines::V4::Product,
           'B' => Datanorm::Lines::V4::Extra,
           'D' => Datanorm::Lines::V4::Dimension,
-          'T' => Datanorm::Lines::V4::Text
-          # 'P' => Datanorm::Lines::V4::Price,
+          'T' => Datanorm::Lines::V4::Text,
+          'P' => Datanorm::Lines::V4::Priceset
         }.freeze
 
         option :columns

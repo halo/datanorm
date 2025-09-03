@@ -57,8 +57,11 @@ module Datanorm
         # One Product has many prices.
         # We create one file per product that has one price per line for that product.
         def cache_priceset
+          set_workdir = workdir.join('P')
+          FileUtils.mkdir_p(set_workdir)
+
           record.prices.each do |price|
-            workdir.join('P', ::Datanorm::Helpers::Filename.call(record.id)).open('a') do |file|
+            set_workdir.join(::Datanorm::Helpers::Filename.call(price.id)).open('a') do |file|
               file.write("#{price.to_json}\n")
             end
           end

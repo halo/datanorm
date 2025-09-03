@@ -8,20 +8,21 @@ module Datanorm
       # Example:
       #   A;N;QBMK10208R;50;Brandmeldekabel rot;1;3;M;228313;2AED; ; ;
       #
-      # 1. Stelle:  Satzartenkennzeichen "A"
-      # 2. Stelle:  Verarbeitungskennzeichen (N=Neuanlage, L=Löschung, A=Änderung, X=Artikel-nummernänderung)
-      # 3. Stelle:  Artikelnummer
-      # 4. Stelle:  Textkennzeichen
-      # 5. Stelle:  Artikelbezeichnung 1 (Kurztextzeile 1) / Artikelbezeichnung 2 (Kurztextzeile 2)
+      # [0] Satzartenkennzeichen "A"
+      # [1] Verarbeitungskennzeichen (N=Neuanlage, L=Löschung, A=Änderung, X=Artikel-nummernänderung)
+      # [2] Artikelnummer
+      # [3] Textkennzeichen
+      # [4] Artikelbezeichnung 1 (Kurztextzeile 1)
+      # [5] Artikelbezeichnung 2 (Kurztextzeile 2)
       #
-      # [5] Preiskennzeichen (see `Datanorm::Lines::V4::Price`)
+      # [6] Preiskennzeichen (see `Datanorm::Lines::V4::Price`)
       #
-      # 8. Stelle:  Preiseinheit (0= per Mengeneinheit 1; 1=10, 2=100, 3=1000)
-      # 9. Stelle:  Mengeneinheit (Stk, m, lfm)
-      # 10. Stelle:  Preis (Wenn Hersteller die Preise mit Satzart "P" liefern, braucht hier kein Preis (0) eingetragen werden)
-      # 11. Stelle:  Rabattgruppe (Zur Ermittlung des Netto-Artikelpreises über die Rabattmatrix)
-      # 12. Stelle:  Hauptwarengruppe
-      # 13. Stelle:  Langtextschlüssel (Mit dem Langtextschlüssel wird ein Text aus mehreren Zeilen (Satzart T) an den Artikel gekettet.
+      # [7] Preiseinheit (0= per Mengeneinheit 1; 1=10, 2=100, 3=1000)
+      # [8] Mengeneinheit (Stk, m, lfm)
+      # [9] Preis (Wenn Hersteller die Preise mit Satzart "P" liefern, braucht hier kein Preis (0) eingetragen werden)
+      # [10] Rabattgruppe (Zur Ermittlung des Netto-Artikelpreises über die Rabattmatrix)
+      # [11] Hauptwarengruppe
+      # [12] Langtextschlüssel (Mit dem Langtextschlüssel wird ein Text aus mehreren Zeilen (Satzart T) an den Artikel gekettet.
       class Product < ::Datanorm::Lines::Base
         def to_s
           "<Product #{as_json}>"
@@ -36,11 +37,11 @@ module Datanorm
         end
 
         def retail_price?
-          columns[5] == '1'
+          columns[6] == '1'
         end
 
         def wholesale_price?
-          columns[5] == '2'
+          columns[6] == '2'
         end
 
         def cents

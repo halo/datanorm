@@ -1,6 +1,5 @@
 plugins:
   - rubocop-minitest
-  - rubocop-rake
 
 AllCops:
   NewCops: enable
@@ -15,12 +14,20 @@ Layout/LineLength:
 Style/FrozenStringLiteralComment:
   SafeAutoCorrect: true
 
-# # Tests and Rake tasks may have long blocks.
-# Metrics/BlockLength:
-#   Exclude:
-#     - '**/Rakefile'
-#     - '**/*.rake'
-#     - '**/test/**/*_test.rb'
+# Don't accidentally delete `focus` while developing.
+Minitest/Focus:
+  SafeAutoCorrect: false
+
+# # Tests may have long blocks.
+Metrics/AbcSize:
+  Exclude:
+    - '**/test/**/*_test.rb'
+Metrics/BlockLength:
+  Exclude:
+    - '**/test/**/*_test.rb'
+Metrics/MethodLength:
+  Exclude:
+    - '**/test/**/*_test.rb'
 
 Layout/LineLength:
   Exclude:

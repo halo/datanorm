@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Datanorm
   module Lines
     module V5
@@ -17,10 +19,6 @@ module Datanorm
         def cents
           columns[8].to_i
         end
-
-        # def price
-        #   BigDecimal(cents / 100)
-        # end
 
         def title
           columns[3..4].join(' ').strip

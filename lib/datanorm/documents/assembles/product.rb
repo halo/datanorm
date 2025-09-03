@@ -14,12 +14,36 @@ module Datanorm
           load_files!
         end
 
+        # ------
+        # Basics
+        # ------
+
         def id
           json[:id]
         end
 
+        def quantity
+          json[:quantity]
+        end
+
+        def quantity_unit
+          json[:quantity_unit]
+        end
+
+        def discount_group
+          json[:discount_group]
+        end
+
+        # -------
+        # Textual
+        # -------
+
         def title
           json[:title]
+        end
+
+        def text_id
+          json[:text_id]
         end
 
         def description
@@ -27,7 +51,21 @@ module Datanorm
           # and the text shared by several products of the same kind.
           # In practice, those two are not intended for stacking.
           # Instead, we choose one or the other.
-          dimension_content || text_content
+          return dimension_content if dimension_content && !dimension_content.strip.empty?
+
+          text_content
+        end
+
+        # -----------------------
+        # Immediate Price details
+        # -----------------------
+
+        def retail_price?
+          json[:is_retail_price]
+        end
+
+        def wholesale_price?
+          json[:is_wholesale_price]
         end
 
         def cents
@@ -36,15 +74,19 @@ module Datanorm
 
         # Convenience shortcut.
         def price
-          BigDecimal(cents / 100)
+          BigDecimal(cents) / 100
         end
 
-        def text_id
-          json[:text_id]
-        end
+        # ------------------------
+        # Referenced Price details
+        # ------------------------
 
-        def quantity_unit
-          json[:quantity_unit]
+        def prices
+          return @prices if defined?(@prices)
+
+          @prices = prices_content&.split("\n")&.map do |json|
+            ::Datanorm::Documents::Assembles::Price.new(json:)
+          end || []
         end
 
         # -------
@@ -56,8 +98,10 @@ module Datanorm
         end
 
         def as_json
+          # Adding referenced attributes that were cached to disk during preprocessing.
           json.merge(
-            description:
+            description:,
+            prices: prices.map(&:as_json)
           )
         end
 
@@ -84,10 +128,20 @@ module Datanorm
         end
 
         def text_content
+          return unless text_id
           return @text_content if defined?(@text_content)
 
           @text_content = begin
             path = workdir.join('T', ::Datanorm::Helpers::Filename.call(text_id))
+            path.read if path.file?
+          end
+        end
+
+        def prices_content
+          return @prices_content if defined?(@prices_content)
+
+          @prices_content = begin
+            path = workdir.join('P', ::Datanorm::Helpers::Filename.call(id))
             path.read if path.file?
           end
         end
