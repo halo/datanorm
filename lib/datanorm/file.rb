@@ -33,6 +33,7 @@ module Datanorm
       ::CSV.foreach(path, **options) do |columns|
         line_number += 1
         next if line_number == 1 # Skip header, it's parsed separately
+        next if columns.empty? # Empty line
 
         yield ::Datanorm::Lines::Parse.call(version:, columns:, source_line_number: line_number)
       end

@@ -25,9 +25,11 @@ class TheFileTest < Minitest::Test
     assert_predicate lines[0], :kind_product?
   end
 
-  def test_v4_lines_count
-    file = Datanorm::File.new(path: TestAsset.v4_with_texts)
+  def test_v4_invalid_lines
+    file = Datanorm::File.new(path: TestAsset.v4_with_empty_lines_and_invalid_tags)
 
-    assert_equal 34, file.lines_count
+    products = file.to_a
+
+    assert_equal 6, products.size
   end
 end

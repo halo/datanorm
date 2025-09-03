@@ -20,6 +20,10 @@ module TestAsset
   def self.v5_first_texts_then_products
     File.join(__dir__, 'assets/v5_first_texts_then_products.001')
   end
+
+  def self.v4_with_empty_lines_and_invalid_tags
+    File.join(__dir__, 'assets/v4_with_empty_lines_and_invalid_tags.001')
+  end
 end
 
 require 'datanorm'
