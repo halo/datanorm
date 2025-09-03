@@ -58,6 +58,15 @@ class DocumentTest < Minitest::Test
     assert_equal '004.050', items[0].category_id
   end
 
+  def test_missing_references
+    document = Datanorm::Document.new(path: TestAsset.v4_with_missing_text_references)
+    items = document.to_a
+
+    assert_equal 1, items.size
+    assert_equal 'Z-0159', items[0].id
+    assert_nil items[0].description
+  end
+
   def test_pricesets
     document = Datanorm::Document.new(path: TestAsset.v4_products_before_texts)
     items = document.map { it }.compact

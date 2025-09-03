@@ -24,6 +24,10 @@ module TestAsset
   def self.v4_with_empty_lines_and_invalid_tags
     File.join(__dir__, 'assets/v4_with_empty_lines_and_invalid_tags.001')
   end
+
+  def self.v4_with_missing_text_references
+    File.join(__dir__, 'assets/v4_with_missing_text_references.001')
+  end
 end
 
 require 'datanorm'

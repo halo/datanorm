@@ -53,7 +53,7 @@ module Datanorm
           # Instead, we choose one or the other.
           return dimension_content if dimension_content && !dimension_content.strip.empty?
 
-          text_reference.read
+          text_reference&.read
         end
 
         # -----------------------
@@ -108,19 +108,19 @@ module Datanorm
         # -----------------
 
         def matchcode
-          extra_reference.read[:matchcode]
+          extra_reference.read&.fetch(:matchcode)
         end
 
         def alternative_id
-          extra_reference.read[:alternative_id]
+          extra_reference.read&.fetch(:alternative_id)
         end
 
         def ean
-          extra_reference.read[:ean]
+          extra_reference.read&.fetch(:ean)
         end
 
         def category_id
-          extra_reference.read[:category_id]
+          extra_reference.read&.fetch(:category_id)
         end
 
         # -------
@@ -133,7 +133,7 @@ module Datanorm
 
         def as_json
           # Adding referenced attributes that were cached to disk during preprocessing.
-          json.merge(description:, prices: prices.map(&:as_json)).merge(extra_reference.read)
+          json.merge(description:, prices: prices.map(&:as_json)).merge(extra_reference.read || {})
         end
 
         def to_json(...)

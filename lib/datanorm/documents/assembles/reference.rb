@@ -20,16 +20,25 @@ module Datanorm
         private
 
         def read!
-          if parse_json
-            JSON.parse(path.read, symbolize_names: true) if path.file?
+          return unless path.file?
 
+          if parse_json
+            read_json!
           elsif path.file?
-            if split_newlines
-              path.read.split("\n")
-            else
-              path.read
-            end
+            read_file!
           end
+        end
+
+        def read_file!
+          if split_newlines
+            path.read.split("\n")
+          else
+            path.read
+          end
+        end
+
+        def read_json!
+          JSON.parse(path.read, symbolize_names: true)
         end
       end
     end
