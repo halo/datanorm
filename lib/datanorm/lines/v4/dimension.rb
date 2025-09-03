@@ -21,20 +21,16 @@ module Datanorm
           "DIMENSION [#{id}] #{line_number.to_s.rjust(3)} #{content.encode('UTF-8', 'CP850').gsub("\n", '⏎')}"
         end
 
-        def dimension?
-          true
-        end
-
         def id
           encode columns[2]
         end
 
         def line_number
-          encode columns[3].to_i
+          columns[3].to_i
         end
 
         def content
-          [encode(columns[6]), encode(columns[10])].join("\n")
+          "#{encode(columns[6])}\n#{encode(columns[10])}"
         end
 
         def <=>(other)

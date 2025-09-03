@@ -10,10 +10,6 @@ module Datanorm
           "TEXT [#{id}] <#{line_number}> #{content.encode('UTF-8', 'CP850').gsub("\n", '⏎')}"
         end
 
-        def text?
-          true
-        end
-
         def id
           columns[2]
         end

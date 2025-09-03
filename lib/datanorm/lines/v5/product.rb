@@ -6,10 +6,6 @@ module Datanorm
           "[#{id}] Product-5 #{item_title} - EUR #{price}"
         end
 
-        def product?
-          true
-        end
-
         def id
           columns[2]
         end

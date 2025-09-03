@@ -5,6 +5,7 @@ source 'https://rubygems.org'
 gemspec
 
 gem 'minitest'
+gem 'minitest-focus'
 gem 'minitest-redgreen'
 gem 'rake'
 gem 'rubocop'

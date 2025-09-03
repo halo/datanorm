@@ -10,7 +10,8 @@ module Datanorm
         def initialize(json:, workdir:)
           @json = JSON.parse(json, symbolize_names: true)
           @workdir = workdir
-          load!
+
+          load_files!
         end
 
         def id
@@ -22,15 +23,42 @@ module Datanorm
         end
 
         def description
-          @dimension_content || @text_content
+          # In theory, the dimension is for this product only
+          # and the text shared by several products of the same kind.
+          # In practice, those two are not intended for stacking.
+          # Instead, we choose one or the other.
+          dimension_content || text_content
         end
 
         def cents
           json[:cents]
         end
 
+        # Convenience shortcut.
+        def price
+          BigDecimal(cents / 100)
+        end
+
         def text_id
           json[:text_id]
+        end
+
+        def quantity_unit
+          json[:quantity_unit]
+        end
+
+        # -------
+        # Helpers
+        # -------
+
+        def to_s
+          "<Product #{as_json}>"
+        end
+
+        def as_json
+          json.merge(
+            description:
+          )
         end
 
         def to_json(...)
@@ -41,36 +69,26 @@ module Datanorm
 
         attr_reader :json, :workdir
 
-        def as_json
-          {
-            id:,
-            title:,
-            description:
-          }
+        # The temporary cached files may be deleted quickly, so let's fetch what we need.
+        def load_files!
+          as_json # effectively populates all data we need
         end
 
-        def load!
-          @dimension_content = dimension_content!
-          @text_content = text_content!
-        end
+        def dimension_content
+          return @dimension_content if defined?(@dimension_content)
 
-        def dimension_content!
-          path = workdir.join('D', "#{Base64.urlsafe_encode64(id.to_s)}.txt")
-          if path.file?
-            path.read
-          else
-            log { "No dimension found at #{path}" }
-            nil
+          @dimension_content = begin
+            path = workdir.join('D', ::Datanorm::Helpers::Filename.call(id))
+            path.read if path.file?
           end
         end
 
-        def text_content!
-          path = workdir.join('T', "#{Base64.urlsafe_encode64(text_id.to_s)}.txt")
-          if path.file?
-            path.read
-          else
-            log { "No text found at #{path}" }
-            nil
+        def text_content
+          return @text_content if defined?(@text_content)
+
+          @text_content = begin
+            path = workdir.join('T', ::Datanorm::Helpers::Filename.call(text_id))
+            path.read if path.file?
           end
         end
       end
@@ -85,82 +103,8 @@ def matchcode
   extra_row&.matchcode
 end
 
-def vendor_item_id
-  extra_row&.vendor_item_id
-end
-
-def add(row: nil, lines: [])
-  puts "Item #{id} gets ROW #{row.inspect} ROWS #{lines.inspect}" if ENV['DEBUG']
-  return if lines.blank? && row.blank?
-
-  lines.push(row) if row
-  lines.each { @lines.add it }
-end
-
-def title
-  product_row&.item_title.presence
-end
-
-def description
-  description_lines.sort
-                  .map(&:content)
-                  .join("\n")
-                  .delete_prefix(title.to_s)
-                  .strip
-                  .presence
-end
-
-def purchase_list_price
-  product_row&.price
-end
-
-def target_purchase_price
-  if discount_lines.present?
-    discount_lines.sort.last.target_purchase_price
-  else
-    product_row&.price
-  end
-end
-
-def to_s
-  <<~STRING
-    ===============================================================
-    [#{id}] #{title}
-    #{quantity} #{quantity_unit} EUR #{purchase_list_price}/#{target_purchase_price}
-    ---------------------------------------------------------------
-    #{matchcode} [#{vendor_item_id}]
-
-    Text #{text_id} (#{dimension_lines.size} Dimensions)
-    #{description}
-    ---------------------------------------------------------------
-    #{lines.to_a.join("\n")}
-    ===============================================================
-
-  STRING
-end
-
-private
-
-attr_reader :lines
-
-def description_lines
-  dimension_lines.presence || text_lines
-end
-
-def product_row
-  @lines.detect(&:product?)
-end
-
 def extra_row
   @lines.detect(&:extra?)
-end
-
-def dimension_lines
-  @lines.select(&:dimension?)
-end
-
-def text_lines
-  @lines.select(&:text?)
 end
 
 def discount_lines

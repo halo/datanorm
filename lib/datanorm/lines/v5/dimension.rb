@@ -8,9 +8,6 @@ module Datanorm
           "[#{id}] DIMENSION-5 - #{columns}"
         end
 
-        def dimension?
-          true
-        end
 
         def id
           encode columns[2]

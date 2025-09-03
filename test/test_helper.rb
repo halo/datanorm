@@ -2,6 +2,7 @@
 
 require 'bundler/setup'
 require 'minitest/autorun'
+require 'minitest/focus'
 
 module TestAsset
   def self.all
@@ -10,6 +11,10 @@ module TestAsset
 
   def self.v4_with_texts
     File.join(__dir__, 'assets/v4_with_texts.001')
+  end
+
+  def self.v4_products_before_texts
+    File.join(__dir__, 'assets/v4_products_before_texts.001')
   end
 end
 

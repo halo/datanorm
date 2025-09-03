@@ -23,6 +23,16 @@ class DocumentTest < Minitest::Test
     assert_send [items[0].description, :start_with?, "Der DIS-AM 20/60 Infrarot-Melder kann \nzur"]
     assert_send [items[0].description, :start_with?, "Der DIS-AM 20/60 Infrarot-Melder kann \nzur"]
     assert_equal 28_500, items[1].cents
-    assert_equal 28_500, items[0].quantity_unit
+    assert_equal 'St.', items[0].quantity_unit
+  end
+
+  def test_pricesets
+    document = Datanorm::Document.new(path: TestAsset.v4_products_before_texts)
+    items = document.map { it }.compact
+
+    assert_equal 3, items.size
+    assert_equal 'QBMK10208R', items[2].id
+    assert_equal 'asd', items[2].as_json
+
   end
 end

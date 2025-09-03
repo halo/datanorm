@@ -17,29 +17,58 @@ module Datanorm
         # Another variant is to have all [T] at the beginning and then [A] etc. at the end of the file.
         # In that case the IDs of [T] are separate and later referenced in [A].
         def call
-          if record.dimension? || record.text?
-            # These are individual records with their own unique IDs and can later be referenced by
-            # Products.
-            log { "Pre-Processing #{record.id}" }
-            ::Datanorm::Documents::Preprocesses::Cache.call(
-              workdir:,
-              namespace: record.kind,
-              id: record.id,
-              target_line_number: record.line_number,
-              content: record.content
-            )
+          if record.kind_dimension? || record.kind_text?
+            cache_longtext
 
-          elsif record.extra?
-            ::Datanorm::Documents::Preprocesses::Cache.call(
-              workdir:,
-              namespace: record.kind,
-              id: record.id,
-              content: record.to_json
-            )
-          elsif record.product?
-            workdir.join('A.txt').open('a') do |file|
-              file.write("#{record.to_json}\n")
+          elsif record.kind_extra?
+            cache_json
+
+          elsif record.kind_priceset?
+            cache_priceset
+
+          elsif record.kind_product?
+            cache_product
+          end
+        end
+
+        private
+
+        # Record sets with their own unique IDs that can later be referenced by Products.
+        def cache_longtext
+          log { "Pre-Processing #{record.id}" }
+          ::Datanorm::Documents::Preprocesses::Cache.call(
+            workdir:,
+            namespace: record.record_kind,
+            id: record.id,
+            target_line_number: record.line_number,
+            content: record.content
+          )
+        end
+
+        def cache_json
+          ::Datanorm::Documents::Preprocesses::Cache.call(
+            workdir:,
+            namespace: record.record_kind,
+            id: record.id,
+            content: record.to_json
+          )
+        end
+
+        # One Product has many prices.
+        # We create one file per product that has one price per line for that product.
+        def cache_priceset
+          record.prices.each do |price|
+            workdir.join('P', ::Datanorm::Helpers::Filename.call(record.id)).open('a') do |file|
+              file.write("#{price.to_json}\n")
             end
+          end
+        end
+
+        # When preprocessing is done, we'll need to loop throuth each product once.
+        # So let's append each product to one file, so that we can go through it later.
+        def cache_product
+          workdir.join('A.txt').open('a') do |file|
+            file.write("#{record.to_json}\n")
           end
         end
       end

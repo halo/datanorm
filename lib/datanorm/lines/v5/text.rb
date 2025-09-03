@@ -8,10 +8,6 @@ module Datanorm
           "[#{id}] TEXT-5 #{line_number} #{content}"
         end
 
-        def text?
-          true
-        end
-
         def id
           columns[2]
         end

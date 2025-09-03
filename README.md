@@ -1,6 +1,6 @@
 # About Datanorm
 
-Datanorm is a German legacy file format for serialization of B2B product data (stock lists) optimized for floppy disks and monospace needle printers. Version 4 was published in 1994 and version 5 in 1999, since then there has been no change in the format.
+Datanorm is a German legacy file format for serialization of B2B product data (stock lists) optimized for floppy disks and monospace needle printers. Version 4 was published in 1994 and version 5 in 1999, since then there has been no change in the format. Earlier versions date back to 1986 and are practically extinct.
 
 30 years later, it is still the de-facto standard used by German product suppliers (especially electricity and plumbing) to communicate to their business clients, which products can be bought at which price.
 
@@ -16,6 +16,8 @@ Disadvantages:
 * There are cross-references between lines within a single Datanorm file, that make parsing very complicated and inefficient (Datanorm files are commonly between 1 MB and 3 GB large).
 
 * Version 4, still most commonly used, has special quirks, such as only allowing a product quantity unit of 1, 10, 100 or 1000. So you cannot have a product sold in packs of, say 25.
+
+* One line in the file for prices "P" in version 5 may actually be a set of prices for multiple different products, thus separated by new lines at seemingly random places in the data.
 
 * Over the years, people started working around the standard to overcome its limitations. In other words, every company that exports Datanorm, uses data fields in different ways to communicate different things and many structure the content of the file differently. For example, one file for creating products, one for amending existing products and one for doing both. Another example is to use product descriptions and product category descriptions interchangeably, and using free text fields to override normalized values that are wrong.
 
@@ -43,7 +45,7 @@ In Datanorm, *one line* in the file represents one record. The most common ones 
 
 * `T` records were originally meant to be long texts that similar products could reference to. So, in addition to the description `D` for one single product, each product could additionally reference one `T` text that it might share with other products. But in practice they are not shared and `T` is often used instead of `D`. In other words, sometimes every single product has one single set of `T` records just for that one product. What makes `T` records complicated, in terms of file processing, is that each set of `T` records has a unique ID that is not related to any product. Rather, a product will reference that (made-up) text record set ID to indicate that those `T` records hold the long text description for a product. But the `T` records could be anywhere else in the file, so it's hard to parse.
 
-* Usually, one `A` record holds one price for that product. But there also exist so called `P` records (one per product) that hold nothing but the product ID and one price for that product. All these `P` price records are delivered in a separate file called `DATPREIS.001`, because you need fewer floppy disks if you only regularly update the prices rather than the entirety of all product details (given you already have imported them before). Sometimes you're dependent on those `P` records from another file, because the `A` record may specify a recommended selling price whereas the corresponding `P` may have discount details that tell you the purchase price. So you might do handle multiple files.
+* Usually, one `A` record holds one price for that product. But there also exist so called `P` records (one for *multiple* products) that hold up to three product IDs and corresponding prices for those products. All these `P` price records are delivered in a separate file called `DATPREIS.001`, because you need fewer floppy disks if you only regularly update the prices rather than the entirety of all product details (given you already have imported them before). Sometimes you're dependent on those `P` records from another file, because the `A` record may specify a recommended selling price whereas the corresponding `P` may have discount details that tell you the purchase price.
 
 * Only in V5 there exists a `C` record that specifies additional data for one product, such as public tender descriptions and how much work time it normally takes to physically install a product.
 
@@ -52,6 +54,8 @@ In Datanorm, *one line* in the file represents one record. The most common ones 
 What you find here is the minimal Ruby code required to parse and loop over the content of a Datanorm file and works with both version 4 and 5.
 
 It does not cover all features that Datanorm has, but it supports everything to get you started with the most common data attributes.
+
+If you encounter a parsing or price calculation bug, it's likely that I didn't encounter your Datanorm file yet. I appreciate your pull request in that case.
 
 ### Parsing technique
 
@@ -75,16 +79,18 @@ That's what we're doing. For that to work, however, we need to
 * parse the entire file (may take many minutes for large files)
 * remember, categorize and cache the data (on disk, because you don't want 3 GB in RAM)
 * then enumerate over every product
-* while doing so, gather the referenced attributes that belong to each product
+* while doing so, gather the referenced attributes that belong to each product (sometimes referencing one part of one line, as in "P" record sets)
 * wrap it all in a Ruby object and yield it as UTF-8 to you
 
-I know there are smart ways to make this faster, but that only works if your Datanorm file is structured in a certain way, which I can't guarantee, and I want to avoid the complexity of detecting various kinds of structures.
+I know there are smart ways to make this faster. But "being smart" was probably the reason that the file format grew in complexity in the first place.
 
-So I went for a parsing solution that works every time, with every file, at the expense of running very long.
+I went for a parsing mechanism that works every time, with every file, at the expense of running a little bit longer than needed.
 
 ## Usage
 
-If you want one product at a time, without having to deal with the complexities of cross-references, you can use this:
+If you have a `DATANORM.001` and also a `DATPREIS.001`, you must concatenate those two files into one file first (their versions need to be the same). The resulting, merged file is what you provide to this Rubygem.
+
+If you want one product at a time, without having to deal with the complexities of Datanorm, you can use this:
 
 ```ruby
 document = Datanorm::Document.new(path: 'datanorm.001')
@@ -92,9 +98,9 @@ document = Datanorm::Document.new(path: 'datanorm.001')
 puts document.header
 puts document.version
 
-document.each do |item, progress|
-  # Once pre-processing is complete, you'll start to get items here
-  puts item # <- can be nil
+document.each do |product, progress|
+  # Once pre-processing is complete, you'll start to get products here
+  puts product # <- can be nil in the beginning
 
   # You can always look at the progress to see what's going on.
   puts progress if progress.significant? # Throttling, so your STDOUT doesn't get spammed.
@@ -118,20 +124,20 @@ end
 **Debugging**
 
 You can set the ENV variable `DEBUG_DATANORM=1` for verbose logging output.
-You can also inspect the denormalization cache located at `/tmp/datanorm_ruby`.
-It won't be automatically deleted if you set the `DEBUG_DATANORM` flag.
+You can also inspect the denormalization cache located at `/tmp/datanorm_ruby`
+(it won't be automatically deleted if you set the `DEBUG_DATANORM` flag).
 
 ## Development
 
 Throughout the code, the following terms are used:
 
-* `line` is one line of a Datanorm file.
-* `record` is one Ruby Object representing one `line`.
-* `item` is a product and all its (immediate and referenced) attributes.
+* `line` is one line of a Datanorm file in its raw format.
+* `record` is one Ruby Object representing one of those `line`s.
+* `product` is a product (article) and all its (immediate and referenced) attributes.
 
 Run unit tests with `bin/tests`.
 
-To get you started, you can run `bin/demo path/to/your/datanorm.002` to show its contents.
+To get you started, you can run `bin/demo path/to/your/datanorm.001` to show its contents.
 
 ## Open Source Maintenance
 

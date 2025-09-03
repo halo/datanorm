@@ -4,75 +4,62 @@ module Datanorm
   module Lines
     # Object that represents one line of a Datanorm file.
     class Base
-      # Array that holds the attributes of one line.
-      # If there are no semicolons, this Array has only one long String in it.
-      attr_reader :columns, :source_line_number
+      # Array that holds all attributes of one line.
+      # In the Datanorm file they are typically separated by seimcolons.
+      # Header rows may lack semicolons (in V4), in that case, this Array has only one long String.
+      attr_reader :columns
+
+      # Where in the originating Datanorm file this line is located.
+      attr_reader :source_line_number
+
+      # This class is subclassed by one type per row.
+      # Add convenient predicate methods to query the kind of record class.
+      # E.g. `Datanorm::Lines::V4::Extra` has `kind_extra?` to be true.
+      def self.inherited(subclass)
+        kind_method = "kind_#{subclass.name.split('::').last.downcase}?"
+
+        define_method(kind_method) do
+          self.class.name.split('::').last.downcase == subclass.name.split('::').last.downcase
+        end
+
+        super
+      end
 
       def initialize(columns:, source_line_number:)
         @columns = columns
         @source_line_number = source_line_number
       end
 
-      # Usually a product number.
+      # Every row has a unique identifier. Most often a product number.
+      # Text records commonly have their own IDs, which are not equal to the product number.
       # Multiple lines can have the same ID (e.g. one for price and several for description).
-      # Text records can also have their own IDs and they don't equal the product number.
-      # Overridden in subclasses.
+      # Also known as "Satzartenkennzeichen".
       def id
-        '?'
+        raise "Implement ##{__method__} in #{self.class}"
       end
 
+      def as_json
+        raise "Implement ##{__method__} in #{self.class}"
+      end
+
+      # The first character in every line always represents the record type.
       # E.g. "T", "A"
-      def kind
+      def record_kind
         columns[0]
       end
 
       # Overridden in subclasses.
       def to_s
-        "[#{id}] UNKNOWN #{columns}"
+        to_json
+      end
+
+      # Convenience Shortcut to convert attributes from CP850 to UTF-8.
+      def encode(...)
+        ::Datanorm::Helpers::Utf8.call(...)
       end
 
       def to_json(...)
         as_json.to_json(...)
-      end
-
-      def encode(thing)
-        return if thing.nil? || thing.to_s.empty?
-
-        thing.to_s.encode('UTF-8')
-      end
-
-      # Type querying. Overridden in subclass to return true.
-
-      def header?
-        false
-      end
-
-      def product?
-        false
-      end
-
-      def extra?
-        false
-      end
-
-      def times?
-        false
-      end
-
-      def dimension?
-        false
-      end
-
-      def text?
-        false
-      end
-
-      def price?
-        false
-      end
-
-      def discount?
-        false
       end
     end
   end

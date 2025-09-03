@@ -63,12 +63,12 @@ module Datanorm
         end
 
         def filepath
-          filename = "#{Base64.urlsafe_encode64(id.to_s)}.txt"
-          workdir.join(filename)
+          workdir.join(::Datanorm::Helpers::Filename.call(id))
         end
 
         def workdir
-          parent_workdir.join(namespace)
+          namespace_parts = Array(namespace)
+          parent_workdir.join(*namespace_parts)
         end
       end
     end

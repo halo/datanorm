@@ -25,10 +25,6 @@ module Datanorm
           "EXTRA     [#{id}] #{"{#{matchcode}}" unless matchcode.empty?} EAN: #{ean}"
         end
 
-        def extra?
-          true
-        end
-
         def id
           encode columns[2]
         end
