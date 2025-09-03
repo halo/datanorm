@@ -2,6 +2,16 @@
 
 module Datanorm
   # Represents the first line of a DATANORM file.
+  #
+  # Zeichen 1: Satzkennzeichen für Vorlaufsatz: immer „V“
+  # Zeichen 2: freie Verwendung
+  # Zeichen 3-8: Datum im Format TTMMJJ, darf für Cadia nicht leer sein
+  # Zeichen 9-48: Infotext1 (Bezeichnung des Datenlieferanten), darf für Cadia nicht leer sein
+  # Zeichen 49-88: Infotext2
+  # Zeichen 89-123: Infotext3
+  # Zeichen 124-125: Datanormversion (für Cadia zwingend 04)
+  # Zeichen 126-128: Währung (im Regelfall EUR)
+  #
   class Header
     def initialize(line:)
       @line = line.to_s
@@ -23,6 +33,12 @@ module Datanorm
       @date = parse_date
     end
 
+    def title
+      return @title if defined?(@title)
+
+      @title = parse_title
+    end
+
     private
 
     attr_reader :line
@@ -40,6 +56,14 @@ module Datanorm
         ::Datanorm::Headers::V5::Date.call(line:)
       elsif version.four?
         ::Datanorm::Headers::V4::Date.call(line:)
+      end
+    end
+
+    def parse_title
+      if version.five?
+        ::Datanorm::Headers::V5::Title.call(line:)
+      elsif version.four?
+        ::Datanorm::Headers::V4::Title.call(line:)
       end
     end
   end

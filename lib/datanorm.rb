@@ -16,8 +16,10 @@ require 'datanorm/helpers/utf8'
 require 'datanorm/helpers/filename'
 
 require 'datanorm/headers/v4/date'
+require 'datanorm/headers/v4/title'
 require 'datanorm/headers/v4/version'
 require 'datanorm/headers/v5/date'
+require 'datanorm/headers/v5/title'
 require 'datanorm/headers/v5/version'
 
 require 'datanorm/lines/parse'
