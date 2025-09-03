@@ -11,9 +11,41 @@ class DocumentTest < Minitest::Test
     end
   end
 
-  def test_items
+  def test_each
     document = Datanorm::Document.new(path: TestAsset.v4_with_texts)
     items = document.map { it }.compact
+
+    assert_equal 2, items.size
+    assert_equal '100033152', items[0].id
+    assert_equal '100033162', items[1].id
+    assert_equal 'DIS-AM 20 BUS Infrarot-Bewegungsmelder', items[0].title
+    assert_equal 'DIS-AM 60 BUS Infrarot-Bewegungsmelder', items[1].title
+    assert items[0].description.start_with? "Der DIS-AM 20/60 Infrarot-Melder kann \nzur"
+    assert_equal 28_500, items[1].cents
+    assert_equal 'St.', items[0].quantity_unit
+    assert_equal '004.050', items[0].category_id
+  end
+
+  def test_progress
+    document = Datanorm::Document.new(path: TestAsset.v4_with_texts)
+
+    yields = []
+    document.each(yield_progress: true) do |product, progress|
+      yields << [product, progress]
+    end
+
+    assert_equal 35, yields.size
+    assert_equal 35, yields.count(&:last)
+    assert_equal 2, yields.count(&:first)
+    assert_equal 33, yields[0].last.current
+    assert_equal 34, yields[0].last.total
+    assert_equal 2, yields[34].last.current
+    assert_equal 2, yields[34].last.total
+  end
+
+  def test_enumerable
+    document = Datanorm::Document.new(path: TestAsset.v4_with_texts)
+    items = document.to_a
 
     assert_equal 2, items.size
     assert_equal '100033152', items[0].id

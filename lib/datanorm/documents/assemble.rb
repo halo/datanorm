@@ -8,13 +8,19 @@ module Datanorm
       include ::Datanorm::Logging
 
       option :workdir
+      option :yield_progress, default: -> { false }
 
       def call
         return unless products_file.file?
 
         ::File.foreach(products_file) do |json|
           progress.increment!
-          yield ::Datanorm::Documents::Assembles::Product.new(json:, workdir:), progress
+
+          if yield_progress
+            yield ::Datanorm::Documents::Assembles::Product.new(json:, workdir:), progress
+          else
+            yield ::Datanorm::Documents::Assembles::Product.new(json:, workdir:)
+          end
         end
       end
 

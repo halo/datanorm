@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |s|
   s.name = 'datanorm'
-  s.version = '0.0.1'
+  s.version = '1.0.0'
   s.required_ruby_version = '>= 3.4.0'
   s.license = 'MIT'
   s.summary = 'Parse German DATANORM files like you belong to the 90s'

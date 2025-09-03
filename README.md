@@ -94,7 +94,9 @@ I went for a parsing mechanism that works every time, with every file, at the ex
 
 If you have a `DATANORM.001` and also a `DATPREIS.001`, you must concatenate those two files into one file first (their versions need to be the same). The resulting, merged file is what you provide to this Rubygem.
 
-If you want one product at a time, without having to deal with the complexities of Datanorm, you can use this:
+### Quick Usage
+
+If you want one product at a time (without having to deal with the complexities of Datanorm), you can use this:
 
 ```ruby
 document = Datanorm::Document.new(path: 'datanorm.001')
@@ -102,7 +104,25 @@ document = Datanorm::Document.new(path: 'datanorm.001')
 puts document.header
 puts document.version
 
-document.each do |product, progress|
+document.each do |product|
+  puts product.title
+  puts product.to_json
+end
+```
+
+Notice that it can take a long time until the first product is yielded due to the preprocessing that takes place at first.
+
+### Usage with Progress
+
+ If you want to see the progress, you can use the following:
+
+```ruby
+document = Datanorm::Document.new(path: 'datanorm.001')
+
+puts document.header
+puts document.version
+
+document.each(yield_progress: true) do |product, progress|
   # Once pre-processing is complete, you'll start to get products here
   puts product # <- can be nil in the beginning
 
@@ -110,6 +130,8 @@ document.each do |product, progress|
   puts progress if progress.significant? # Throttling, so your STDOUT doesn't get spammed.
 end
 ```
+
+### Bare Datanorm parsing
 
 In case you only want the raw Datanorm file one line at a time as Ruby Objects, you can use this:
 

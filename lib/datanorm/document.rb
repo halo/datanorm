@@ -28,13 +28,13 @@ module Datanorm
       file.version
     end
 
-    def each(&)
+    def each(yield_progress: false, &)
       unless @preprocessed
-        ::Datanorm::Documents::Preprocess.call(file:, workdir:, &)
+        ::Datanorm::Documents::Preprocess.call(file:, workdir:, yield_progress:, &)
         @preprocessed = true
       end
 
-      ::Datanorm::Documents::Assemble.call(workdir:, &)
+      ::Datanorm::Documents::Assemble.call(workdir:, yield_progress:, &)
     ensure
       # At this point all yields have gone through and we can clean up.
       workdir.rmtree unless ENV['DEBUG_DATANORM']

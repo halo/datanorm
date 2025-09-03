@@ -10,6 +10,7 @@ module Datanorm
 
       option :file
       option :workdir
+      option :yield_progress, default: -> { false }
 
       def call
         FileUtils.mkdir_p(workdir)
@@ -18,7 +19,9 @@ module Datanorm
           ::Datanorm::Documents::Preprocesses::Process.call(workdir:, record:)
 
           progress.increment!
-          yield nil, progress # No items to yield during preprocess.
+          if yield_progress
+            yield nil, progress # No items to yield during preprocess.
+          end
         end
       end
 
