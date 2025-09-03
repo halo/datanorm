@@ -16,7 +16,7 @@ Style/FrozenStringLiteralComment:
 
 # Don't accidentally delete `focus` while developing.
 Minitest/Focus:
-  SafeAutoCorrect: false
+  AutoCorrect: false
 
 # # Tests may have long blocks.
 Metrics/AbcSize:
@@ -26,10 +26,6 @@ Metrics/BlockLength:
   Exclude:
     - '**/test/**/*_test.rb'
 Metrics/MethodLength:
-  Exclude:
-    - '**/test/**/*_test.rb'
-
-Layout/LineLength:
   Exclude:
     - '**/test/**/*_test.rb'
 

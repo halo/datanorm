@@ -3,6 +3,7 @@
 module Datanorm
   module Lines
     module V4
+      # rubocop:disable Layout/LineLength
       # Represents one line of the Datanorm file that starts with "P".
       # It contains price data for up to three individual products.
       #
@@ -12,6 +13,7 @@ module Datanorm
       #   P;A;RG601315U1;1;2550;1;5500;;;;;RG601215U1;1;2130;1;5500;;;;;RG6211420U1;1;3210;1;5500;;;;;
       #   P;A;100033162;1;28500;;;;;;;;;;;;;;;;;;;;;;;;;
       #
+      # rubocop:enable Layout/LineLength
       class Priceset < ::Datanorm::Lines::Base
         def to_s
           "<Priceset with #{prices.size} prices>"

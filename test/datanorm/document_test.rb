@@ -23,6 +23,7 @@ class DocumentTest < Minitest::Test
     assert items[0].description.start_with? "Der DIS-AM 20/60 Infrarot-Melder kann \nzur"
     assert_equal 28_500, items[1].cents
     assert_equal 'St.', items[0].quantity_unit
+    assert_equal '004.050', items[0].category_id
   end
 
   def test_pricesets
@@ -32,7 +33,8 @@ class DocumentTest < Minitest::Test
     assert_equal 2, items.size
 
     assert_equal 'QATA207569016', items[0].id
-    assert_equal 'Tehalit ATA207569016 Endstück schnittkaschierend ABS halogenfreiz.LFW', items[0].title
+    assert_equal 'Tehalit ATA207569016 Endstück schnittkaschierend ABS halogenfreiz.LFW',
+                 items[0].title
     assert_equal '00022923', items[0].text_id
     assert_predicate items[0], :retail_price?
     refute_predicate items[0], :wholesale_price?
@@ -41,7 +43,17 @@ class DocumentTest < Minitest::Test
     assert_equal 1, items[0].quantity
     assert_equal 'ST', items[0].quantity_unit
     assert_equal '300', items[0].discount_group
-    assert_equal "Verwendungszwecke\n- Für Geberit Twinline UP-Spülkästen 12\ncm (ab Baujahr 1997 oder ab Baujahr 1988\nmit eingebautem Umbauset auf\n2-Mengen-Spülung)\n- Zum Anschließen von Geberit AquaClean\nWC-Aufsätzen an UP-Spülkästen\n- Zum Anschließen von Geberit AquaClean\n4000 an UP-Spülkästen\n- Zum Anschließen von Geberit AquaClean\n5000 und Geberit AquaClean 5000plus an\nUP-Spülkästen\n- Zum Anschließen von Geberit AquaClean\nTuma WC-Aufsätzen\n- Für Geberit Sigma UP-Spülkästen 12 cm\n- Für vollflächig geflieste Oberflächen", items[0].description
+    assert_equal "Verwendungszwecke\n- Für Geberit Twinline UP-Spülkästen 12\ncm (ab Baujahr " \
+                 "1997 oder ab Baujahr 1988\nmit eingebautem Umbauset auf\n2-Mengen-Spülung)\n- " \
+                 "Zum Anschließen von Geberit AquaClean\nWC-Aufsätzen an UP-Spülkästen\n- Zum " \
+                 "Anschließen von Geberit AquaClean\n4000 an UP-Spülkästen\n- Zum Anschließen " \
+                 "von Geberit AquaClean\n5000 und Geberit AquaClean 5000plus an\nUP-Spülkästen\n" \
+                 "- Zum Anschließen von Geberit AquaClean\nTuma WC-Aufsätzen\n- Für Geberit " \
+                 "Sigma UP-Spülkästen 12 cm\n- Für vollflächig geflieste Oberflächen",
+                 items[0].description
+    assert_equal 'HAGER', items[0].matchcode
+    assert_equal '3602101', items[0].alternative_id
+    assert_nil items[0].ean
 
     assert_equal 2, items[0].prices.size
 
@@ -62,7 +74,8 @@ class DocumentTest < Minitest::Test
     refute_predicate items[0].prices[1], :percentage_discount?
 
     assert_equal 'QBMK10208R', items[1].id
-    assert_equal 'Tehalit LF2002009016 LF-Kanal 20x20 vws LF-Kanal, PVC, verkehrsweiß', items[1].title
+    assert_equal 'Tehalit LF2002009016 LF-Kanal 20x20 vws LF-Kanal, PVC, verkehrsweiß',
+                 items[1].title
     assert_nil items[1].text_id
     assert_predicate items[1], :retail_price?
     refute_predicate items[1], :wholesale_price?
@@ -71,7 +84,11 @@ class DocumentTest < Minitest::Test
     assert_equal 1, items[1].quantity
     assert_equal 'M', items[1].quantity_unit
     assert_equal '240', items[1].discount_group
-    assert_equal "Installationskabel zur Nachrichten- und\nSignalübertragung auf und unter Putz, in\ntrockenen und feuchten Räumen sowie zur\nfesten Verlegung an Außenwänden bei Sch\nutz vor Sonneneinstrahlung. Durch den Ma\nntelaufdruck ist dieses Kabel speziell f\nür die Verwendung in Brandmeldeanlagen\n", items[1].description
+    assert_equal "Installationskabel zur Nachrichten- und\nSignalübertragung auf und unter " \
+                 "Putz, in\ntrockenen und feuchten Räumen sowie zur\nfesten Verlegung an " \
+                 "Außenwänden bei Sch\nutz vor Sonneneinstrahlung. Durch den Ma\nntelaufdruck " \
+                 "ist dieses Kabel speziell f\nür die Verwendung in Brandmeldeanlagen\n",
+                 items[1].description
 
     assert_equal 1, items[1].prices.size
 

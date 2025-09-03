@@ -14,7 +14,7 @@ module Datanorm
         # One common combo is [A], [B], [D] per product throughout the whole file.
         # In that case, the ID is the same for all three.
         #
-        # Another variant is to have all [T] at the beginning and then [A] etc. at the end of the file.
+        # Another variant is all [T] at the beginning and then [A] etc. at the end of the file.
         # In that case the IDs of [T] are separate and later referenced in [A].
         def call
           if record.kind_dimension? || record.kind_text?

@@ -42,8 +42,12 @@ module Datanorm
           encode columns[9]
         end
 
+        def category_id
+          encode columns[11]
+        end
+
         def as_json
-          { id:, alternative_id:, matchcode:, ean: }
+          { alternative_id:, matchcode:, ean:, category_id: }
         end
       end
     end

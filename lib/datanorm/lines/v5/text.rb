@@ -3,6 +3,7 @@
 module Datanorm
   module Lines
     module V5
+      # One line of the Datanorm file starting with T
       class Text < ::Datanorm::Lines::Base
         def to_s
           "[#{id}] TEXT-5 #{line_number} #{content}"

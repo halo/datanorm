@@ -9,7 +9,7 @@ module Datanorm
       #   A;N;QBMK10208R;50;Brandmeldekabel rot;1;3;M;228313;2AED; ; ;
       #
       # [0] Satzartenkennzeichen "A"
-      # [1] Verarbeitungskennzeichen (N=Neuanlage, L=Löschung, A=Änderung, X=Artikel-nummernänderung)
+      # [1] Verarbeitungskennzeichen (N=Neuanlage, L=Löschung, A=Änderung, X=Artikelnummernänderung)
       # [2] Artikelnummer
       # [3] Textkennzeichen
       # [4] Artikelbezeichnung 1 (Kurztextzeile 1)
@@ -19,10 +19,12 @@ module Datanorm
       #
       # [7] Preiseinheit (0= per Mengeneinheit 1; 1=10, 2=100, 3=1000)
       # [8] Mengeneinheit (Stk, m, lfm)
-      # [9] Preis (Wenn Hersteller die Preise mit Satzart "P" liefern, braucht hier kein Preis (0) eingetragen werden)
+      # [9] Preis (Wenn Hersteller die Preise mit Satzart "P" liefern, braucht hier kein Preis (0)
+      #     eingetragen werden)
       # [10] Rabattgruppe (Zur Ermittlung des Netto-Artikelpreises über die Rabattmatrix)
       # [11] Hauptwarengruppe
-      # [12] Langtextschlüssel (Mit dem Langtextschlüssel wird ein Text aus mehreren Zeilen (Satzart T) an den Artikel gekettet.
+      # [12] Langtextschlüssel (Mit dem Langtextschlüssel wird ein Text aus mehreren Zeilen
+      #      (Satzart T) an den Artikel gekettet.
       class Product < ::Datanorm::Lines::Base
         def to_s
           "<Product #{as_json}>"

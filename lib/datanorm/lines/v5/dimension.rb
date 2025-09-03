@@ -3,6 +3,7 @@
 module Datanorm
   module Lines
     module V5
+      # Immediate product description texts. Should take precedence over Text records.
       class Dimension < ::Datanorm::Lines::Base
         def to_s
           "[#{id}] DIMENSION-5 - #{columns}"

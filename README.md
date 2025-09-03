@@ -29,7 +29,7 @@ If you were ever wondering why Germany has so much bureaucracy, it's because the
 
 There are various files with various extensions, but the main ones are those that are called `DATANORM.001`, `DATANORM.002`, etc. They have this convention because those files used to be on one floppy disk each. Nowadays you only have `DATANORM.001`, which can be several GB large.
 
-Other file types are `.RAB` (for discount groups) and `.WRG` (for product categories), but we don't support them.
+Other file types are `.RAB` (for discount groups) and `.WRG` (for product categories), but we don't support them yet (not difficult to implement, though).
 
 ### Main Datanorm file format
 

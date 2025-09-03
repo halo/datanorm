@@ -89,6 +89,26 @@ module Datanorm
           end || []
         end
 
+        # -----------------
+        # Referenced Extras
+        # -----------------
+
+        def matchcode
+          extra_json[:matchcode]
+        end
+
+        def alternative_id
+          extra_json[:alternative_id]
+        end
+
+        def ean
+          extra_json[:ean]
+        end
+
+        def category_id
+          extra_json[:category_id]
+        end
+
         # -------
         # Helpers
         # -------
@@ -99,10 +119,7 @@ module Datanorm
 
         def as_json
           # Adding referenced attributes that were cached to disk during preprocessing.
-          json.merge(
-            description:,
-            prices: prices.map(&:as_json)
-          )
+          json.merge(description:, prices: prices.map(&:as_json)).merge(extra_json)
         end
 
         def to_json(...)
@@ -114,9 +131,8 @@ module Datanorm
         attr_reader :json, :workdir
 
         # The temporary cached files may be deleted quickly, so let's fetch what we need.
-        def load_files!
-          as_json # effectively populates all data we need
-        end
+        # effectively populates all data we need
+        alias load_files! as_json
 
         def dimension_content
           return @dimension_content if defined?(@dimension_content)
@@ -137,6 +153,15 @@ module Datanorm
           end
         end
 
+        def extra_json
+          return @extra_json if defined?(@extra_json)
+
+          @extra_json = begin
+            path = workdir.join('B', ::Datanorm::Helpers::Filename.call(id))
+            JSON.parse(path.read, symbolize_names: true) if path.file?
+          end
+        end
+
         def prices_content
           return @prices_content if defined?(@prices_content)
 
@@ -148,19 +173,4 @@ module Datanorm
       end
     end
   end
-end
-
-__END__
-
-
-def matchcode
-  extra_row&.matchcode
-end
-
-def extra_row
-  @lines.detect(&:extra?)
-end
-
-def discount_lines
-  @lines.select(&:discount?)
 end
