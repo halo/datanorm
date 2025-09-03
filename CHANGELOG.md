@@ -1,10 +1,10 @@
 # 1.0.4
 
-- Parse header title
+- Parse header title.
 
 # 1.0.3
 
-- Improve missing reference detection
+- Improve missing reference detection.
 
 # 1.0.2
 
@@ -12,7 +12,7 @@
 
 # 1.0.1
 
-- Introduce `Product#cheapest_price` and `Product#most_expensive_price`
+- Introduce `Product#cheapest_price` and `Product#most_expensive_price`.
 
 # 1.0.0
 
@@ -20,4 +20,4 @@
 
 # 0.0.1
 
-- Initial release
+- Initial release.
