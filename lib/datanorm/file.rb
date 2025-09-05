@@ -22,9 +22,16 @@ module Datanorm
       end
     end
 
-    # Convenience shortcut.
     def version
       header.version
+    end
+
+    def title
+      header.title
+    end
+
+    def date
+      header.date
     end
 
     def each

@@ -28,6 +28,14 @@ module Datanorm
       file.version
     end
 
+    def title
+      file.title
+    end
+
+    def date
+      file.date
+    end
+
     def each(yield_progress: false, &)
       unless @preprocessed
         ::Datanorm::Documents::Preprocess.call(file:, workdir:, yield_progress:, &)

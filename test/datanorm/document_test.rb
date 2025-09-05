@@ -5,10 +5,23 @@ require 'test_helper'
 class DocumentTest < Minitest::Test
   def test_all_header
     TestAsset.all.each do |path|
-      file = Datanorm::Document.new(path:)
+      document = Datanorm::Document.new(path:)
 
-      assert_includes [4, 5], file.header.version.number
+      assert_includes [4, 5], document.version.number
     end
+  end
+
+  def test_title
+    document = Datanorm::Document.new(path: TestAsset.v4_with_texts)
+
+    assert_equal 'Artikelstammdaten Deutschland, 38_DE EXAMPLE EXAMPLETEC GMBH ' \
+                 'www.example.de info@example.de', document.title
+  end
+
+  def test_date
+    document = Datanorm::Document.new(path: TestAsset.v4_with_texts)
+
+    assert_equal Date.new(2025, 8, 12), document.date
   end
 
   def test_each

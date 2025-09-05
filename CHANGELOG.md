@@ -1,3 +1,7 @@
+# 1.0.5
+
+- Expose Document#title and Document#date
+
 # 1.0.4
 
 - Parse header title.
