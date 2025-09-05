@@ -1,0 +1,28 @@
+#!/bin/bash
+
+# Exit when any command fails
+set -e
+
+rm *.gem
+
+gem build datanorm.gemspec
+
+# Find all gem files in the current directory
+gem_files=( *.gem )
+
+# Check the number of gem files found
+if [ ${#gem_files[@]} -eq 0 ]; then
+    echo "No gem files found."
+    exit 1
+
+elif [ ${#gem_files[@]} -gt 1 ]; then
+    echo "Error: Multiple gem files found. Please ensure there is only one gem file."
+    exit 2
+
+else
+    # Push the single gem file
+    gem push "${gem_files[0]}"
+fi
+
+bundle update
+
