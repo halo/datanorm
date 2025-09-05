@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    datanorm (1.0.4)
+    datanorm (1.0.5)
       base64
       bigdecimal
       calls
